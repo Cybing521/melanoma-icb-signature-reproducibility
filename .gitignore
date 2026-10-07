@@ -14,6 +14,12 @@ qc/*_oof_predictions.tsv
 # 修复前的过期副本（缺 library 列，权威版在 qc/ 下）
 qc_GSE308435_tcr_clonality.tsv
 
+# 600 dpi TIFF（单张 30–46 MB，四张合计 ~145 MB）：不入仓
+# 由 `python scripts/24_figures_mdpi.py` 一键重建；矢量交付物用同目录的 .pdf
+figures/*.tiff
+# 本地目视校验用的低分辨率预览，非正式产物
+figures/*_preview.png
+
 __pycache__/
 *.pyc
 .DS_Store
