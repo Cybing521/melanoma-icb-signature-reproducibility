@@ -29,3 +29,7 @@ __pycache__/
 # .NET 构建产物（稿件生成器）
 manuscript/ManuscriptBuilder/bin/
 manuscript/ManuscriptBuilder/obj/
+
+# 交付包（一次性产出，不入库）
+*_delivery/
+*_delivery.zip
