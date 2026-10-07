@@ -334,11 +334,15 @@ def build() -> dict:
 
     B.append(h(2, "2.11. Supplementary Material"))
     B.append(p(
-        "A single-cell and paired T-cell receptor analysis of 42 longitudinal melanoma biopsies "
-        "from 34 patients was performed during the study. It addresses a different question "
-        "from the one tested here and its findings are reported in the Supplementary Material "
-        "rather than in the main text. In summary, 88,715 cells passed initial loading and "
-        "85,167 (96.0%) survived quality control, resolving into 41 clusters; 11 of 41 cluster "
+        "Two further melanoma series were analysed as part of the study, on a question separate "
+        "from the one tested here; both are reported in the Supplementary Material rather than in "
+        "the main text. A single-cell analysis covers 12 patients (one sample each), and a T-cell "
+        "receptor analysis covers 42 libraries drawn from 34 patients. Of those 34 patients only 7 "
+        "contributed more than one biopsy, so the receptor data support a cross-sectional "
+        "comparison with a small paired subset, not a 42-patient longitudinal series, and no "
+        "within-patient trajectory analysis is reported. In the single-cell component, 88,715 "
+        "cells passed initial loading and 85,167 (96.0%) survived quality control, resolving into "
+        "41 clusters; 11 of 41 cluster "
         "assignments changed under a pre-specified, objective tie-break rule; and 6 clusters "
         "(15.1% of cells) could not be assigned with confidence against the available reference "
         "profiles. Because a substantial fraction of the data remained unassigned, the "
@@ -759,8 +763,9 @@ def build() -> dict:
 
     B.append(h(1, "Supplementary Materials"))
     B.append(p(
-        "Supplementary Material S1: single-cell and paired T-cell receptor analysis of 42 "
-        "longitudinal melanoma biopsies from 34 patients, comprising quality-control metrics, "
+        "Supplementary Material S1: single-cell analysis (12 patients) and T-cell receptor "
+        "analysis (42 libraries from 34 patients, of whom 7 contributed more than one biopsy), "
+        "comprising quality-control metrics, "
         "the cluster marker table, the pre-specified tie-break rule and its application, and "
         "the resulting cell-state scores. Analysis scripts and result files are in the public "
         "repository."))
