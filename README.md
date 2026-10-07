@@ -67,13 +67,34 @@ docs/      Pre-registration and results, in execution order
              07  GSE215868 IMPRES validation results
              08  Pre-registered primary analysis, re-run
              09  Second-signature (IPS-MHC+CP) results
-scripts/   Numbered in execution order, 00–23
+scripts/   Numbered in execution order, 00–24
+figures/   Manuscript figures, vector PDF + PNG (see below)
 meta/      Sample-level metadata and the patient-level inclusion/exclusion table
 qc/        All intermediate and result artefacts (TSV + markdown reports)
 expr/      Gene × GSM expression matrices (five cohorts)
 01_方案/    Study design document (Chinese)
 PROJECT.md Status panel
 todolist.md  Task ledger with acceptance criteria
+```
+
+---
+
+## Figures
+
+Manuscript figures, drawn to MDPI specifications (≤175 mm width, Arial 8–10 pt,
+lowercase bold parenthesised panel labels). Vector PDF is the delivery format; PNG is
+provided for preview. 600 dpi TIFFs are **not** committed (≈145 MB) — regenerate with
+the figure script.
+
+| Figure | File | Printed width | Content |
+|---|---|---|---|
+| 1 | `figures/Figure1_StudyDesign.pdf` | 163.6 mm | Cohort design, patient counts, and where each pre-registered decision applies |
+| 2 | `figures/Figure2_SignaturePerformance.pdf` | 172.9 mm | AUC of both signatures across all three validation cohorts with 95 % CIs |
+| 3 | `figures/Figure3_RuledOutExplanations.pdf` | 151.4 mm | Each pre-specified technical excuse and the artefact that excludes it |
+| 4 | `figures/Figure4_NestedCV.pdf` | 158.4 mm | Nested-CV performance under three AUC conventions, 20 repeats |
+
+```bash
+python scripts/24_figures_mdpi.py   # writes PDF + PNG + 600 dpi TIFF
 ```
 
 ---
