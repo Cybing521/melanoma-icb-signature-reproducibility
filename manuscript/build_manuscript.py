@@ -217,6 +217,19 @@ def build() -> dict:
         "direct target of checkpoint blockade. This check is weak, and the reconstruction "
         "remains the largest single threat to the validity of the IMPRES arm."))
     B.append(p(
+        "The direction convention is itself unresolved, and this is a separate risk from the "
+        "gene list. The two MATLAB files in the authors' repository that define the score "
+        "specify the pairwise ratio in opposite orientations for the two feature blocks, so the "
+        "repository is internally inconsistent; and the publication states only that the feature "
+        "is 1 when the first gene is expressed below the second, without giving the written "
+        "orientation of any of the 15 pairs in the supplementary table that could not be "
+        "retrieved. The only material that could settle the convention is therefore unavailable. "
+        "We pre-registered one orientation, report the mirrored orientation in parallel at every "
+        "comparison, and neither reproduced the published performance, so these data cannot "
+        "resolve the ambiguity in favour of either orientation; but the ambiguity remains "
+        "unexcluded, and the normalisation-invariance check described next does not test it."))
+
+    B.append(p(
         "An important property of the scoring rule was exploited to control the implementation: "
         "because it depends only on the ordering of paired expression values, IMPRES is "
         "mathematically invariant to any monotone transformation of the expression matrix. We "
@@ -273,8 +286,9 @@ def build() -> dict:
         "exclude each. Seven were registered: implementation error; normalisation; platform "
         "suitability; sample size; biopsy timepoint; treatment regimen; and endpoint "
         "definition. A negative result is reported as concerning the signatures only if all "
-        "seven have been addressed. Sections 2.4, 2.9, 3.4 and 3.7 present the corresponding "
-        "artefacts."))
+        "seven have been addressed. The items are numbered in the order registered here, and Table 6 "
+        "and Figure 4 follow the same numbering. Sections 2.3, 2.4, 2.9, 3.6 and 3.7 present "
+        "the corresponding artefacts."))
 
     B.append(h(2, "2.8. Power Analysis and Cross-Cohort Meta-Analysis (Post Hoc)"))
     B.append(p(
@@ -289,8 +303,9 @@ def build() -> dict:
         "Because a single cohort yields a wide interval, we additionally pooled the "
         "study-level estimates. This does not merge patients. The pre-registration forbids "
         "sample-level pooling across cohorts, and this analysis does not violate it: the inputs "
-        "are the published per-cohort AUCs and sample sizes, and no patient-level record is "
-        "touched or created. Pooling was performed on the logit scale, with a fixed-effect "
+        "are the per-cohort AUC estimates computed in this study together with their cohort "
+        "sample sizes, and no patient-level record is touched or created. Pooling was performed "
+        "on the logit scale, with a fixed-effect "
         "estimate and a DerSimonian–Laird random-effects estimate; heterogeneity was assessed "
         "with Cochran's Q and I². Directional consistency across cohorts was assessed with a "
         "sign test, in which a signature whose point estimates all fall below 0.50 is recorded "
@@ -330,7 +345,14 @@ def build() -> dict:
         "direction and the point estimate fell between 0.70 and 1.00. Both directions were "
         "computed for every signature and cohort and all are reported, and no direction was "
         "selected after the fact. Confidence intervals are reported to three decimal places "
-        "throughout."))
+        "throughout. No multiplicity adjustment was applied, and none is claimed: the only "
+        "pre-specified inferential tests are the primary comparison and its mirrored counterpart "
+        "in each of the three cohorts, and every secondary, pooled and stratified analysis is "
+        "reported as description without an inferential claim attached to it. No comparison in "
+        "this paper is used to support a positive conclusion. Power was computed with the "
+        "Hanley–McNeil standard error evaluated at the hypothesised true AUC, and, where "
+        "sample size is discussed, by solving that expression for n; both are stated in the "
+        "script that produces Table 4."))
 
     B.append(h(2, "2.11. Supplementary Material"))
     B.append(p(
@@ -381,7 +403,7 @@ def build() -> dict:
                     "duplication hazards that were checked and how each was handled; (d) what "
                     "may and may not cross cohort boundaries, and why pooling patients or "
                     "expression matrices is forbidden while study-level meta-analysis of "
-                    "published per-cohort estimates is not.",
+                    "the per-cohort estimates computed here is not.",
                     163.8))
     B.append(table(
         "Table 1. Characteristics of the three primary cohorts.",
@@ -409,7 +431,20 @@ def build() -> dict:
         "replication criterion in any of the three cohorts: the pre-registered direction gave "
         "0.359 (0.172–0.552) in GSE91061, 0.298 (0.122–0.521) in GSE78220 and 0.505 "
         "(0.380–0.631) in GSE215868, while the mirrored direction gave 0.659 (0.452–0.843), "
-        "0.583 (0.351–0.786) and 0.483 (0.358–0.608) respectively."))
+        "0.583 (0.351–0.786) and 0.483 (0.358–0.608) respectively. The registered one-sided "
+        "Mann–Whitney U test of the primary comparison returns p = 0.474 (mirrored direction "
+        "p = 0.608)."))
+    B.append(p(
+        "Two sensitivity analyses were registered in advance for this cohort and both are "
+        "reported here irrespective of their result, as the protocol requires. Excluding the 22 "
+        "patients with prior checkpoint-blockade exposure, leaving an immunotherapy-naive "
+        "population of 36 responders and 27 non-responders, gave 0.518 (0.380–0.656) in the "
+        "pre-registered direction and 0.468 (0.333–0.610) mirrored. Admitting stable disease as "
+        "a third category leaves the pairwise discrimination unchanged by construction and the "
+        "registered one-sided test unchanged at p = 0.474; descriptively, the median score is "
+        "3.0 in all three groups (PRCR, stable disease and progression). Neither sensitivity "
+        "analysis moves the result away from chance, and neither is used to alter the primary "
+        "comparison."))
     B.append(p(
         "The mirrored direction deserves a specific caution. Its value in GSE91061, 0.659, is "
         "the largest IMPRES estimate obtained anywhere in this study, and a reader could be "
@@ -459,6 +494,10 @@ def build() -> dict:
 
     B.append(h(2, "3.4. Signature 1 Across Cohorts: Directional Erraticism"))
     B.append(p(
+        "The pooling and sign tests in this section were not pre-registered and are reported as "
+        "post hoc (Section 2.8); they are descriptive of the per-cohort estimates above and are "
+        "not used to support any conclusion on their own."))
+    B.append(p(
         "Across the three cohorts the pre-registered direction of IMPRES gave 0.359, 0.298 and "
         "0.505. The estimates are not merely low; they are not consistently oriented. One cohort "
         "places the score above chance and two place it below, and the sign test across the "
@@ -498,9 +537,15 @@ def build() -> dict:
     B.append(p(
         "We therefore report the following, and nothing stronger: IPS-MHC+CP exhibits a weak, "
         "cross-cohort-consistent signal that this design can neither confirm nor exclude. It is "
-        "not replication. Confirming a discrimination of the observed magnitude would require "
-        "approximately 53 patients per group, against the 45 and 34 available here "
-        "(Section 3.7). The I² of zero should not be read as evidence that the cohorts are "
+        "not replication. It is worth being precise about what a larger sample would buy, because the "
+        "two requirements are very different. To push the upper bound of the confidence interval "
+        "below the registered replication threshold of 0.70, at the observed point estimate of "
+        "0.591, would take approximately 53 patients per group. To establish instead that a "
+        "discrimination of 0.591 is genuinely above chance requires far more: on the same "
+        "convention used for Table 4, the power of the present 45-and-34 comparison at a true AUC "
+        "of 0.591 is 0.29, and reaching 0.80 would need on the order of 150 patients per group "
+        "(Section 3.6). Neither is the sample size available here. "
+        "The I² of zero should not be read as evidence that the cohorts are "
         "interchangeable; the more parsimonious reading, given how different the cohorts are, "
         "is that the underlying signal is weak enough that population differences are swamped "
         "by it."))
@@ -509,16 +554,22 @@ def build() -> dict:
                     "Figure 3. Discrimination of both signatures across the three validation "
                     "cohorts, in the pre-registered direction, with 95% bootstrap confidence "
                     "intervals. (a) and (b) show each cohort in the pre-registered direction, "
-                    "with the dashed line at chance and the shaded band covering the AUC range "
-                    "reported for the signature in its own publication. Neither signature "
-                    "reaches that band. (c) plots the same point estimates as a line across "
+                    "with the dashed line at chance and the shaded band marking the registered "
+                    "replication window, AUC 0.70 to 1.00. Neither signature reaches it. That band "
+                    "is a pre-registered decision threshold and not a published value: IMPRES "
+                    "reports a cross-cohort range of 0.77 to 0.96 in its original publication, "
+                    "whereas IPS-MHC+CP is derived in this study and has no published counterpart, "
+                    "so the same threshold is applied to it purely as a reference bar. "
+                    "(c) plots the same point estimates as a line across "
                     "cohorts: IMPRES does not agree even on which side of chance it falls, "
                     "whereas IPS-MHC+CP stays above it throughout. The two signatures therefore "
                     "fail differently, which is the substantive result.",
                     153.2))
     B.append(table(
         "Table 3. Cross-cohort results for both signatures. Single-cohort AUCs with bootstrap "
-        "95% intervals, and random-effects pooled estimates (n = 138).",
+        "95% intervals, and random-effects pooled estimates over the 138 patients contributing "
+        "study-level estimates; no patient-level record was pooled. Pooled columns are post hoc "
+        "(Section 2.8); the single-cohort columns are the pre-registered analyses.",
         ["Signature", "GSE91061", "GSE78220", "GSE215868", "Pooled (RE)", "I²", "p vs 0.50", "Sign test p"],
         [
             ["IMPRES, pre-registered direction", "0.359 (0.172–0.552)", "0.298 (0.122–0.521)",
@@ -543,24 +594,32 @@ def build() -> dict:
     B.append(p(
         "The same calculation bounds the other direction. Detecting a true AUC of 0.65 has power "
         "0.685, and detecting one of 0.60 has power 0.347. The minimum discrimination "
-        "detectable at 80% power with the available sample size is 0.661. This design is thus "
+        "detectable at 80% power is 0.661 at 45 patients per group and 0.681 at 34 per group, "
+        "the latter being the smaller of the two arms actually available. This design is thus "
         "well powered against the published performance and poorly powered against a weak one, "
         "which is exactly the boundary within which the IPS-MHC+CP result must be read."))
     B.append(table(
         "Table 4. Power of the primary comparison (45 responders, 34 non-responders) to detect "
-        "a true AUC, one-sided alpha = 0.025.",
+        "a true AUC, one-sided alpha = 0.025. Post hoc (Section 2.8); reported to bound what the "
+        "negative result can and cannot exclude, not to qualify the pre-registered comparison.",
         ["True AUC", "0.60", "0.65", "0.70", "0.77"],
         [["Power", "0.347", "0.685", "0.929", "0.999"]]))
 
     B.append(h(2, "3.7. Cohort Heterogeneity and the Limits of Attribution"))
+    B.append(p(
+        "The analyses in this section were not pre-registered and are reported as post hoc "
+        "(Section 2.9). They address why the result is negative, not whether it is; nothing in "
+        "this section is used to alter the pre-registered comparison."))
     B.append(p(
         "The three cohorts differ in platform, in regimen, in recruitment setting and, as set "
         "out in Section 2.3, in their native endpoint. We tested the components of that "
         "difference that our data can resolve."))
     B.append(p(
         "Biopsy timepoint did not explain the result. Stratifying GSE91061 by visit, the "
-        "pre-treatment stratum reproduced the development-set estimate exactly (AUC 0.359, "
-        "0.180–0.557; 10 responders, 23 non-responders), which also serves as an independent "
+        "pre-treatment stratum reproduced the development-set point estimate exactly (AUC 0.359 in "
+        "both; the re-run interval is 0.180–0.557 against 0.172–0.552 in Table 3, the difference "
+        "being a separate bootstrap resampling), with 10 responders and 23 non-responders, which "
+        "also serves as an independent "
         "check that the scoring implementation is stable. The on-treatment stratum did not "
         "recover the signal; it reversed, giving 0.172 (0.057–0.309) with 12 responders and 24 "
         "non-responders, an interval lying entirely below chance. Pooling the two visits gives 0.250 "
@@ -589,7 +648,8 @@ def build() -> dict:
         "signatures vary substantially between patients in every cohort."))
     B.append(table(
         "Table 5. Stratified results underlying Section 3.7, reported in full including strata "
-        "that do not favour the conclusion. n is responders / non-responders.",
+        "that do not favour the conclusion. n is responders / non-responders. Post hoc "
+        "(Section 2.9); no inferential claim is made from any stratum.",
         ["Stratum", "Signature", "n", "AUC (95% bootstrap CI)"],
         [
             ["Biopsy timepoint: pre-treatment", "IMPRES g1_low", "10 / 23", "0.359 (0.180–0.557)"],
@@ -608,24 +668,33 @@ def build() -> dict:
         "and is shown for completeness only. The fourth regimen stratum contained one patient and "
         "is listed so that the table is complete; no AUC can be formed from it."))
     B.append(figure("figures/Figure3_RuledOutExplanations.png",
-                    "Figure 4. The seven technical explanations registered in advance and the "
-                    "artefact used to exclude each, with the two explanations that the available "
-                    "data cannot address. Item 7 required no data panel and is documented in "
-                    "the band. Panels (d) to (f) are stratified analyses reported in full, "
-                    "including strata that do not favour the conclusion.",
+                    "Figure 4. The seven technical explanations registered in advance and the artefact used "
+                    "to address each, with the two explanations that the available data cannot "
+                    "exclude. (a) implementation and normalisation invariance, shown as per-sample "
+                    "scores under four normalisations in two directions, all eight combinations "
+                    "identical; (b) the fraction of IMPRES gene pairs with informative pairwise "
+                    "orderings in each cohort; (c) the ratio of observed to independence-expected "
+                    "score standard deviation, showing no low-dimensional collapse; (d) "
+                    "biopsy-timepoint strata and (e) treatment-regimen strata, reported in full "
+                    "including strata that do not favour the conclusion; (f) power of the primary "
+                    "comparison, 45 responders and 34 non-responders, as a function of the true "
+                    "AUC, with the registered 0.70 threshold and the 0.77 lower bound of the "
+                    "published range marked. Panel titles follow the registration order given in "
+                    "Section 2.7; item 7, endpoint definition, required no data panel and is "
+                    "documented in the band.",
                     171.2))
     B.append(table(
         "Table 6. Attribution boundary. Alternative explanations for the negative result, "
         "whether the present data can exclude them, and the artefact that does so.",
         ["Alternative explanation", "Excludable here?", "Basis"],
         [
-            ["Implementation error", "Yes", "Normalisation-invariance check: 4 normalisations × 2 directions, 8/8 identical scores"],
+            ["Implementation error", "Partly", "Normalisation-invariance check (4 normalisations × 2 directions, 8/8 identical scores) rules out normalisation-dependent implementation error. The reconstructed 15-pair list and the direction convention (Section 2.4) cannot be verified against the publication and are not excluded"],
             ["Normalisation", "Yes", "IMPRES is provably invariant to any monotone transform"],
-            ["Platform unsuitability", "Yes", "Scores vary across patients in every cohort (SD 1.55–2.26)"],
+            ["Platform unsuitability", "Yes", "Targeted panel covers 13/15 IMPRES pairs, at the pre-registered inclusion gate, and scores are non-degenerate in every cohort (SD 1.55–2.26)"],
+            ["Insufficient sample size", "Partly", "Power 0.93 at AUC 0.70, 0.999 at AUC 0.77. Not excluded against a weak signal: the 80% power floor is AUC 0.661 at 45 per group and 0.681 at 34 per group, and power at 0.60 is 0.347"],
             ["Biopsy timepoint", "Yes", "Pre-treatment stratum at chance; on-treatment stratum reversed"],
             ["Treatment regimen", "Yes", "All three regimen strata at chance for IMPRES"],
-            ["Endpoint definition", "Yes", "GSE215868 pulled back to a RECIST definition for comparability"],
-            ["Insufficient sample size", "Partly", "Power 0.93 at AUC 0.70, 0.999 at AUC 0.77. Not excluded against a weak signal: the 80% power floor is AUC 0.661 and power at 0.60 is 0.347"],
+            ["Endpoint definition", "Partly", "GSE215868 pulled back to a RECIST definition for comparability. Residual risk: the RECIST labels were parsed by this project and cannot be fully reconciled with formal RECIST assessment"],
             ["Population composition", "No", "No matching variables (subtype, mutation, metastatic burden) available for adjustment"],
             ["Weakness intrinsic to the derivation cohorts", "No", "IMPRES derivation cohort holds 8 independent patients; never analysable here"],
         ]))
@@ -638,10 +707,13 @@ def build() -> dict:
         "unrelated and independently derived, both failed to reproduce their published "
         "discrimination in independent melanoma cohorts under a pre-registered protocol. IMPRES "
         "reached 0.505 (0.380–0.631) in the largest cohort in its pre-registered direction and "
-        "pooled to 0.415 (0.293–0.549) across 138 patients. IPS-MHC+CP reached 0.591 "
-        "(0.463–0.714) and pooled to 0.592 (0.492–0.685). Seven technical explanations were "
-        "excluded by pre-specified tests, and the primary comparison had 0.93 power to detect "
-        "the performance these signatures report elsewhere."))
+        "pooled to 0.415 (0.293–0.549) across the three cohorts, which contributed study-level "
+        "estimates only; no patient-level record was pooled. IPS-MHC+CP reached 0.591 "
+        "(0.463–0.714) and pooled to 0.592 (0.492–0.685). Six of the seven pre-specified "
+        "technical explanations were excluded outright by pre-specified tests; sample size, the "
+        "seventh, was excluded against the published performance but not against a weak signal. "
+        "The primary comparison had 0.93 power to detect the performance these signatures "
+        "report elsewhere."))
     B.append(p(
         "The two failures are of different kinds, and this difference is the substantive result "
         "rather than an incidental observation. IMPRES is directionally erratic: its point "
@@ -675,8 +747,12 @@ def build() -> dict:
         "in platform, regimen, endpoint and setting. We could exclude timepoint and regimen as "
         "explanations, but we could not adjust for melanoma subtype, mutational background or "
         "metastatic disease burden, because the necessary covariates are not consistently "
-        "available across series. Cohort heterogeneity therefore remains a live alternative "
-        "explanation in full generality."))
+        "available across series. GSE215868 makes the point concretely: 45 of its 79 evaluable "
+        "patients are responders, a response rate of 57% that is high for an immune checkpoint "
+        "blockade cohort and reflects that series' question, which was long-term benefit rather "
+        "than response to first-line treatment. The enrolled populations are therefore not "
+        "comparable on response composition, and no covariate adjustment can repair that. "
+        "Cohort heterogeneity remains a live alternative explanation in full generality."))
 
     B.append(h(2, "4.3. Why Two Signatures Fail Differently"))
     B.append(p(
@@ -713,7 +789,10 @@ def build() -> dict:
     B.append(p(
         "The limitations of this study are, in order of severity: the reconstruction of the "
         "IMPRES gene list from the authors' repository rather than from the publication's "
-        "supplementary material, whose four documented retrieval routes all failed; the "
+        "supplementary material, whose four documented retrieval routes all failed; the unresolved "
+        "direction convention in that reconstructed implementation, which the two files in the "
+        "authors' repository define in opposite orientations and which the normalisation-invariance "
+        "check does not test; the "
         "inability to analyse GSE115821, the IMPRES derivation cohort, which contains too few "
         "independent "
         "patients; the absence of matching covariates for population adjustment; the small "
@@ -756,7 +835,9 @@ def build() -> dict:
         "seventh and only partially excluded. IMPRES failed by producing no "
         "consistent direction; IPS-MHC+CP produced a consistent but weak signal that the "
         "available sample size can neither confirm nor exclude, and for which approximately 53 "
-        "patients per group would be required. What the public data cannot determine is whether "
+        "patients per group would be needed to exclude the published level of discrimination, "
+        "and on the order of 150 to establish the observed one above chance. What the public "
+        "data cannot determine is whether "
         "these signatures are weak everywhere or weak only outside their derivation "
         "populations. That question requires the derivation cohorts, and for IMPRES those are "
         "not publicly analysable."))

@@ -224,8 +224,9 @@ def fig1_design() -> None:
         None, [0.38, 0.62], 6.6, [0.0, 0.30, 1.0, 0.62], edge="#FFFFFF")
     ax.text(0.0, 0.20,
             "Forbidden: pooling patients or expression matrices across cohorts.\n"
-            "Permitted: study-level meta-analysis of published per-cohort AUCs,\n"
-            "which touches no patient-level record and cannot create one.",
+            "Permitted: study-level meta-analysis of the per-cohort AUCs\n"
+            "computed in this study, which touches no patient-level\n"
+            "record and cannot create one.",
             fontsize=6.6, style="italic", color="#4D4D4D", va="top", ha="left")
 
     save(fig, "Figure1_StudyDesign")
@@ -255,7 +256,7 @@ def fig2_headline() -> None:
         ax.plot(a, i, "o", ms=5.2, color=C_SIGN1, mec="white", mew=0.7)
     ax.axvline(0.5, ls="--", lw=0.9, color=C_NULL, zorder=0)
     ax.axvspan(0.70, 1.0, color="#FDECEA", zorder=0)
-    ax.text(0.85, -0.42, "published\nrange", fontsize=6, ha="center",
+    ax.text(0.85, -0.42, "registered\nwindow", fontsize=6, ha="center",
             va="top", color="#C0392B")
     ax.set_yticks(range(len(rows)))
     ax.set_yticklabels([r[0] for r in rows], fontsize=6.2)
@@ -384,7 +385,7 @@ def fig3_exclusions() -> None:
                        fontsize=6.0, rotation=45, ha="right")
     ax.set_ylabel("observed / expected SD", fontsize=6.4)
     ax.set_ylim(0, 2.35)
-    ax.set_title("3. Score not\ndegenerate", loc="left",
+    ax.set_title("3. Score non-\ndegeneracy", loc="left",
                  fontweight="bold", fontsize=FONT_SIZE, linespacing=1.5)
     ax.text(0.5, -0.34, "1.0 = variance under independence",
             transform=ax.transAxes, ha="center", va="top", fontsize=5.8,
