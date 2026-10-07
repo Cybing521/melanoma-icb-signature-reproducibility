@@ -826,27 +826,27 @@
   },
   {
    "type": "paragraph",
-   "text": "1. Auslander N.; Ramin M.; Ferrell C.; ... Auslander S.M. Robust prediction of response to immune checkpoint blockade therapy in metastatic melanoma. Nat. Med. 2018, 24, 1545–1549. (The IMPRES signature; note the publisher's correction of December 2018.)"
+   "text": "1. Auslander N.; Zhang G.; Lee J.S.; Frederick D.T.; Miao B.; Moll T.; Tian T.; Wei Z.; Madan S.; Sullivan R.J.; Boland G.; Flaherty K.; Herlyn M.; Ruppin E. Robust prediction of response to immune checkpoint blockade therapy in metastatic melanoma. Nat. Med. 2018, 24, 1545–1549. (The IMPRES signature; note the publisher's correction of December 2018.)"
   },
   {
    "type": "paragraph",
-   "text": "2. Charoentong P.; Carriero N.; Carnu A.; ... Pearce E.J. MHC immunophenoscope and interferon-gamma score reflect distinct tumour-immune profiles in resected melanoma. Cell Rep. 2017, 18, 248–262. (The Immunophenoscore.)"
+   "text": "2. Charoentong P.; Finotello F.; Angelova M.; Mayer C.; Efremova M.; Rieder D.; Hackl H.; Trajanoski Z. Pan-cancer immunogenomic analyses reveal genotype–immunophenotype relationships and predictors of response to checkpoint blockade. Cell Rep. 2017, 18, 248–262. (The Immunophenoscore.)"
   },
   {
    "type": "paragraph",
-   "text": "3. Riaz A.; McArthur D.; Davis K.C.; ... Wolchok J.D.; Postow M.A. Recurrence of melanoma following long-term complete response after anti-PD-1 therapy. Cell. 2017, 171, 933–944. (Source of GSE91061.)"
+   "text": "3. Riaz N.; Havel J.J.; Makarov V.; Desrichard A.; Urba W.J.; Sims J.S.; Hodi F.S.; Martín-Algarra S.; Mandal R.; Sharfman W.H.; Bhatia S.; Hwu W.J.; Gajewski T.F.; Slingluff C.L.; Chowell D.; Kendall S.M.; Chang H.; Shah R.; Kuo F.; Morris L.G.T.; Sidhom J.W.; Schneck J.P.; Horak C.E.; Weinhold N.; Chan T.A. Tumor and microenvironment evolution during immunotherapy with nivolumab. Cell 2017, 171, 934–949.e16. (Source of GSE91061.)"
   },
   {
    "type": "paragraph",
-   "text": "4. Hugo C.W.; Cogswell A.J.; Stockman E.; ... Van Allen E.M. Genomic and Transcriptomic Features of Response to Anti-PD-1 Therapy in Metastatic Melanoma. Cell. 2016, 165, 35–44. (Source of GSE78220.)"
+   "text": "4. Hugo W.; Zaretsky J.M.; Sun L.; Song C.; Moreno B.H.; Hu-Lieskovan S.; Berent-Maoz B.; Pang J.; Chmielowski B.; Cherry G.; Seja E.; Lomeli S.; Kong X.; Kelley M.C.; Sosman J.A.; Johnson D.B.; Ribas A.; Lo R.S. Genomic and transcriptomic features of response to anti-PD-1 therapy in metastatic melanoma. Cell 2016, 165, 35–44. (Source of GSE78220.)"
   },
   {
    "type": "paragraph",
-   "text": "5. Vathiotis I.; Wang Y.; Hong A.; ... Rimm D.L. Baseline gene expression profiling determines long-term benefit to programmed cell death protein 1 axis blockade. Clin. Cancer Res. 2023, 29, 282–294. (Source of GSE215868; native endpoint is 24-month long-term benefit.)"
+   "text": "5. Vathiotis I.A.; Salichos L.; Martinez-Morilla S.; Gavrielatou N.; Aung T.N.; Shafi S.; Wong P.F.; Jessel S.; Kluger H.M.; Syrigos K.N.; Warren S.; Gerstein M.; Rimm D.L. Baseline gene expression profiling determines long-term benefit to programmed cell death protein 1 axis blockade. NPJ Precis. Oncol. 2022, 6, 92. (Source of GSE215868; native endpoint is 24-month long-term benefit.)"
   },
   {
    "type": "paragraph",
-   "text": "6. Hanley J.A.; McNeil B.J. The measurement and use of misclassification rates. Radiology. 1982, 143, 119–120."
+   "text": "6. Hanley J.A.; McNeil B.J. The meaning and use of the area under a receiver operating characteristic (ROC) curve. Radiology 1982, 143, 29–36."
   },
   {
    "type": "paragraph",
@@ -862,7 +862,7 @@
   },
   {
    "type": "paragraph",
-   "text": "10. Liberzon A.; Birger C.; Thorvaldsdottir H.; ... Mesirov J.P. The Molecular Signatures Database hallmark gene set collection. Cell Syst. 2015, 1, 417–425. (Source of the feature annotations used in model development.)"
+   "text": "10. Liberzon A.; Birger C.; Thorvaldsdóttir H.; Ghandi M.; Mesirov J.P.; Tamayo P. The Molecular Signatures Database (MSigDB) hallmark gene set collection. Cell Syst. 2015, 1, 417–425. (Source of the feature annotations used in model development.)"
   }
  ]
 }
