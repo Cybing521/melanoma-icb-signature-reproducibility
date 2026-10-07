@@ -439,7 +439,7 @@ def build() -> dict:
         "Under the three registered conventions the same model gives 0.500, 0.516 ± 0.112 and "
         "0.549 ± 0.257. All three are now reported together (Table 2)."))
     B.append(figure("figures/Figure4_NestedCV.png",
-                    "Figure 4. Nested cross-validation performance under the three registered "
+                    "Figure 2. Nested cross-validation performance under the three registered "
                     "AUC conventions, for the pre-registered six-feature Hallmark panel and for the "
                     "deviant seventeen-feature set actually used, over 20 repeats.",
                     162.7))
@@ -502,7 +502,7 @@ def build() -> dict:
         "by it."))
 
     B.append(figure("figures/Figure2_SignaturePerformance.png",
-                    "Figure 2. Discrimination of both signatures across the three validation "
+                    "Figure 3. Discrimination of both signatures across the three validation "
                     "cohorts, in the pre-registered direction, with 95% bootstrap confidence "
                     "intervals. (a) and (b) show each cohort in the pre-registered direction, "
                     "with the dashed line at chance and the shaded band covering the AUC range "
@@ -604,7 +604,7 @@ def build() -> dict:
         "and is shown for completeness only. The fourth regimen stratum contained one patient and "
         "is listed so that the table is complete; no AUC can be formed from it."))
     B.append(figure("figures/Figure3_RuledOutExplanations.png",
-                    "Figure 3. The seven technical explanations registered in advance and the "
+                    "Figure 4. The seven technical explanations registered in advance and the "
                     "artefact used to exclude each, with the two explanations that the available "
                     "data cannot address. Item 7 required no data panel and is documented in "
                     "the band. Panels (d) to (f) are stratified analyses reported in full, "

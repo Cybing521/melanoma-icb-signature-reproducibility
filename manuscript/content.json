@@ -331,7 +331,7 @@
   {
    "type": "figure",
    "path": "figures/Figure4_NestedCV.png",
-   "caption": "Figure 4. Nested cross-validation performance under the three registered AUC conventions, for the pre-registered six-feature Hallmark panel and for the deviant seventeen-feature set actually used, over 20 repeats.",
+   "caption": "Figure 2. Nested cross-validation performance under the three registered AUC conventions, for the pre-registered six-feature Hallmark panel and for the deviant seventeen-feature set actually used, over 20 repeats.",
    "width_mm": 162.7
   },
   {
@@ -397,7 +397,7 @@
   {
    "type": "figure",
    "path": "figures/Figure2_SignaturePerformance.png",
-   "caption": "Figure 2. Discrimination of both signatures across the three validation cohorts, in the pre-registered direction, with 95% bootstrap confidence intervals. (a) and (b) show each cohort in the pre-registered direction, with the dashed line at chance and the shaded band covering the AUC range reported for the signature in its own publication. Neither signature reaches that band. (c) plots the same point estimates as a line across cohorts: IMPRES does not agree even on which side of chance it falls, whereas IPS-MHC+CP stays above it throughout. The two signatures therefore fail differently, which is the substantive result.",
+   "caption": "Figure 3. Discrimination of both signatures across the three validation cohorts, in the pre-registered direction, with 95% bootstrap confidence intervals. (a) and (b) show each cohort in the pre-registered direction, with the dashed line at chance and the shaded band covering the AUC range reported for the signature in its own publication. Neither signature reaches that band. (c) plots the same point estimates as a line across cohorts: IMPRES does not agree even on which side of chance it falls, whereas IPS-MHC+CP stays above it throughout. The two signatures therefore fail differently, which is the substantive result.",
    "width_mm": 153.2
   },
   {
@@ -605,7 +605,7 @@
   {
    "type": "figure",
    "path": "figures/Figure3_RuledOutExplanations.png",
-   "caption": "Figure 3. The seven technical explanations registered in advance and the artefact used to exclude each, with the two explanations that the available data cannot address. Item 7 required no data panel and is documented in the band. Panels (d) to (f) are stratified analyses reported in full, including strata that do not favour the conclusion.",
+   "caption": "Figure 4. The seven technical explanations registered in advance and the artefact used to exclude each, with the two explanations that the available data cannot address. Item 7 required no data panel and is documented in the band. Panels (d) to (f) are stratified analyses reported in full, including strata that do not favour the conclusion.",
    "width_mm": 171.2
   },
   {
