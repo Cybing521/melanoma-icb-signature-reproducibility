@@ -471,9 +471,9 @@ def fig3_exclusions() -> None:
         "                                                derivation cohorts   ✗\n"
         "✗ = the available data cannot exclude this. Item 4 is excluded against the published\n"
         "performance (power 0.93 at AUC 0.70) but not against a weak signal. Item 7 needed no\n"
-        "data panel: the native\n"
-        "endpoint of GSE215868 is 24-month long-term benefit (PFS-derived), not RECIST, so response\n"
-        "was re-derived from best overall response to match the endpoint on which IMPRES was reported."
+        "data panel because the native endpoint of GSE215868 is 24-month long-term benefit\n"
+        "(PFS-derived), not RECIST; response was re-derived from best overall response to match\n"
+        "the endpoint on which IMPRES was reported."
     )
     fig.text(0.5, 0.118, band, ha="center", va="top", fontsize=6.0,
              color="#333333", linespacing=1.75,

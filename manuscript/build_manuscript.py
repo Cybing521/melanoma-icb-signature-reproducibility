@@ -571,7 +571,7 @@ def build() -> dict:
         "corresponding IPS-MHC+CP estimates in full for transparency: 0.524 (0.326–0.726), 0.710 "
         "(0.450–0.920) with 10 responders and 10 non-responders, and 0.570 (0.320–0.805) "
         "respectively. The nivolumab value for IPS-MHC+CP is the highest number in this study "
-        "for that signature, and it is the reason the full stratified results are given in Table 6 "
+        "for that signature, and it is the reason the full stratified results are given in Table 5 "
         "rather than only the favourable strata: a table reporting only the good ones would be "
         "selection rather than audit. "
         "With 20 patients and an interval spanning 0.45 to 0.92 it carries no inferential weight, "
@@ -584,7 +584,7 @@ def build() -> dict:
         "IPS-MHC+CP has a standard deviation of 1.10 to 1.38 with no repeated values. Both "
         "signatures vary substantially between patients in every cohort."))
     B.append(table(
-        "Table 6. Stratified results underlying Section 3.7, reported in full including strata "
+        "Table 5. Stratified results underlying Section 3.7, reported in full including strata "
         "that do not favour the conclusion. n is responders / non-responders.",
         ["Stratum", "Signature", "n", "AUC (95% bootstrap CI)"],
         [
@@ -611,7 +611,7 @@ def build() -> dict:
                     "including strata that do not favour the conclusion.",
                     171.2))
     B.append(table(
-        "Table 5. Attribution boundary. Alternative explanations for the negative result, "
+        "Table 6. Attribution boundary. Alternative explanations for the negative result, "
         "whether the present data can exclude them, and the artefact that does so.",
         ["Alternative explanation", "Excludable here?", "Basis"],
         [
