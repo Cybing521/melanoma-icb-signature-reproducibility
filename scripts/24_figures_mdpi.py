@@ -164,11 +164,11 @@ def fig1_design() -> None:
         ax,
         [["GSE91061", "109 / 65", "development"],
          ["GSE78220", "28 / 26", "external validation"],
-         ["GSE215868", "105 / 105", "large-scale validation"],
-         ["GSE244982", "41 / 41", "direction consistency"],
-         ["GSE308433-435", "42 / 34", "paired tumour-TCR"]],
+         ["GSE215868", "105 / 105", "large-scale\nvalidation"],
+         ["GSE244982", "41 / 41", "direction\nconsistency"],
+         ["GSE308433/4/5", "42 / 34", "paired\ntumour-TCR"]],
         ["cohort", "smp / pat", "role in this study"],
-        [0.32, 0.24, 0.44], 6.4, [0, 0.02, 1.0, 0.90], highlight_rows={3})
+        [0.34, 0.24, 0.42], 6.2, [0, 0.02, 1.0, 0.90], highlight_rows={3})
 
     # ---- (b) 主分析纳排 ----
     ax = fig.add_subplot(gs[0, 1])
@@ -202,19 +202,20 @@ def fig1_design() -> None:
     ax.set_title("Analysis-unit checks performed", loc="left", fontweight="bold", pad=4)
     mk_table(
         ax,
-        [["Repeated biopsies", "paired / mixed structures;\nnever independent samples"],
-         ["Pt27A / Pt27B", "one patient, two anatomical\nsites; collapsed by median"],
-         ["Pt16 (GSE78220)", "on-treatment only; dropped\nby include_primary flag"],
-         ["Mel-TIL-026 / HM026", "the same patient in two\ncohorts; de-duplicated first"],
-         ["GSE215868 plate ID", "plate position, not\na patient ID"]],
+        [["Repeated biopsies", "paired / mixed structures;\nnot independent samples"],
+         ["Pt27A / Pt27B", "one patient, two sites;\ncollapsed by median"],
+         ["Pt16 (GSE78220)", "on-treatment only;\ndropped by flag"],
+         ["Mel-TIL-026 / HM026", "same patient in two\ncohorts; de-duplicated"],
+         ["GSE215868 plate ID", "plate position,\nnot a patient ID"]],
         ["situation", "handling"],
-        [0.44, 0.56], 6.4, [0, 0.02, 1.0, 0.90])
+        [0.42, 0.58], 6.2, [0, 0.02, 1.0, 0.90])
 
     # ---- (d) 队列间为何不合并 ----
     ax = fig.add_subplot(gs[1, 1])
     hide(ax)
     panel(ax, "d")
-    ax.set_title("Why cohorts are never pooled", loc="left", fontweight="bold", pad=4)
+    ax.set_title("What may and may not cross cohorts", loc="left",
+                 fontweight="bold", pad=4)
     mk_table(
         ax,
         [["1. Sampling time", "GSE91061 pairs pre-dose with\nC1D29; the others are pre-tx"],
@@ -222,9 +223,9 @@ def fig1_design() -> None:
          ["3. Platform, units", "raw counts / FPKM / featureCounts /\nNanoString counts"]],
         None, [0.38, 0.62], 6.6, [0.0, 0.30, 1.0, 0.62], edge="#FFFFFF")
     ax.text(0.0, 0.20,
-            "Consequence: cross-cohort work is limited to direction-consistency\n"
-            "tests and external validation, so a cohort difference can never be\n"
-            "mistaken for a biological signal.",
+            "Forbidden: pooling patients or expression matrices across cohorts.\n"
+            "Permitted: study-level meta-analysis of published per-cohort AUCs,\n"
+            "which touches no patient-level record and cannot create one.",
             fontsize=6.6, style="italic", color="#4D4D4D", va="top", ha="left")
 
     save(fig, "Figure1_StudyDesign")
@@ -463,12 +464,14 @@ def fig3_exclusions() -> None:
 
     # ================= 底部横条 =================
     band = (
-        "Excluded by design and data (7 of 9):\n"
+        "Excluded outright (6 of 9); item 4 addressed but not fully resolved:\n"
         "1  implementation error      4  sample size         7  endpoint definition\n"
         "2  normalisation             5  biopsy timepoint     population composition   ✗\n"
         "3  platform unsuitability    6  treatment regimen   weakness in the\n"
         "                                                derivation cohorts   ✗\n"
-        "✗ = the available data cannot exclude this. Item 7 needed no data panel: the native\n"
+        "✗ = the available data cannot exclude this. Item 4 is excluded against the published\n"
+        "performance (power 0.93 at AUC 0.70) but not against a weak signal. Item 7 needed no\n"
+        "data panel: the native\n"
         "endpoint of GSE215868 is 24-month long-term benefit (PFS-derived), not RECIST, so response\n"
         "was re-derived from best overall response to match the endpoint on which IMPRES was reported."
     )
@@ -523,7 +526,7 @@ def fig4_cv() -> None:
     ax.axhline(0.5, color="#C0392B", lw=1.0, ls="--")
     ax.axhline(ra.mean(), color=C_GREY, lw=0.8, ls=":")
     ax.axhline(rb.mean(), color=C_SIGN1, lw=0.8, ls=":")
-    ax.set_xlabel("repeat (each = one 5-fold split)")
+    ax.set_xlabel("CV repeat")
     ax.set_ylabel("mean AUC")
     ax.set_ylim(0.1, 0.95)
     ax.legend(frameon=False, fontsize=6.0, loc="lower left", ncol=2,
@@ -552,9 +555,9 @@ def fig4_cv() -> None:
         ax.spines[s].set_visible(False)
     # 说明文字放到坐标轴外，避免压在柱子上
     ax.text(0.5, -0.30,
-            "pooled OOF = all 20 repeats merged, so each patient is\n"
-            "counted 20x. Reporting only 0.500 misleads: it is the\n"
-            "most conservative of the three statistics.",
+            "pooled OOF merges all 20 repeats, so each patient is\n"
+            "counted 20 times. Fold SD is 0.257 for the 17-feature set\n"
+            "and 0.213 for the pre-registered panel.",
             transform=ax.transAxes, fontsize=6.0, style="italic", color=C_GREY,
             ha="center", va="top", linespacing=1.5)
 
