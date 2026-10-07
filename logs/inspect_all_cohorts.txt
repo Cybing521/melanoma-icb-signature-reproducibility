@@ -1,0 +1,140 @@
+
+========================================================================
+GSE244982  n=41
+========================================================================
+
+-- gender  (非空 41/41, 取值 2 种)
+     F                                                                      21
+     M                                                                      20
+
+-- groups  (非空 41/41, 取值 5 种)
+     anti-CTLA4 resistant                                                   17
+     anti-PD1 resistant, BRAFi day7                                         10
+     anti-PD1 resistant                                                     10
+     mucosal                                                                3
+     NA                                                                     1
+
+-- previous. brafi  (非空 41/41, 取值 3 种)
+     no_                                                                    24
+     no_During, day 7                                                       11
+     yes_Before                                                             6
+
+-- prior.ctla4i  (非空 41/41, 取值 2 种)
+     TRUE                                                                   37
+     FALSE                                                                  4
+
+-- stage  (非空 41/41, 取值 4 种)
+     M1c                                                                    34
+     M1b                                                                    3
+     M1a                                                                    2
+     IIIb                                                                   2
+
+-- tissue  (非空 41/41, 取值 1 种)
+     melanoma                                                               41
+
+-- treatment  (非空 41/41, 取值 2 种)
+     anti-CTLA4 resistant                                                   21
+     anti-PD1 resistant                                                     20
+
+-- type.of.primary  (非空 41/41, 取值 3 种)
+     skin                                                                   31
+     unknown                                                                7
+     mucosa                                                                 3
+
+-- 标题推断: 唯一患者/个体前缀 41 个; 例: ['Pat11', 'Pat13', 'Pat14', 'Pat15', 'Pat16', 'Pat17', 'Pat18', 'Pat19']
+-- 标题例: ['Pat5', 'Pat6', 'Pat8', 'Pat9']
+
+========================================================================
+GSE294272  n=29
+========================================================================
+
+-- tissue  (非空 29/29, 取值 1 种)
+     lymph node                                                             29
+
+-- treatment  (非空 29/29, 取值 3 种)
+     Untreated                                                              14
+     ICI_resistant                                                          10
+     ICI_responder                                                          5
+
+-- 标题推断: 唯一患者/个体前缀 29 个; 例: ['HM002', 'HM003-Large', 'HM003-Small', 'HM004', 'HM005', 'HM006', 'HM007', 'HM009']
+-- 标题例: ['HM002_RNA-seq', 'HM003-Large_RNA-seq', 'HM003-Small_RNA-seq', 'HM004_RNA-seq']
+
+========================================================================
+GSE294273  n=12
+========================================================================
+
+-- tissue  (非空 12/12, 取值 1 种)
+     lymph node                                                             12
+
+-- treatment  (非空 12/12, 取值 3 种)
+     Untreated                                                              4
+     ICI-resistant                                                          4
+     ICI-responder                                                          4
+
+-- 标题推断: 唯一患者/个体前缀 12 个; 例: ['HM002', 'HM004', 'HM005', 'HM006', 'HM009', 'HM012', 'HM014', 'HM019']
+-- 标题例: ['HM002_GEX', 'HM004_GEX', 'HM005_GEX', 'HM006_GEX']
+
+========================================================================
+GSE308434  n=42
+========================================================================
+
+-- cell type  (非空 42/42, 取值 1 种)
+     tumor cell (nuclei)                                                    42
+
+-- genotype  (非空 42/42, 取值 21 种)
+     BRAF V600E                                                             6
+     NRAS Q61R                                                              5
+     BRAF NRAS KIT WT                                                       4
+     NRAS Q61K                                                              3
+     BRAF WT                                                                3
+     NA                                                                     3
+     BRAF V600K CTNNB1 H36Y                                                 2
+     BRAF K601_T604delins                                                   2
+     BRAF/NRAS WT                                                           2
+     NRAS Q61L CTNNB1 S38Y                                                  1
+     NRAS Q61R BRAF p.K60E exon15 BRAF p.S467L exon 11 TERT C250T (c.-146C> 1
+     NRAS Q61L                                                              1
+     BRAF NRAS KIT WT TP53 (M237I)                                          1
+     BRAF NRAS KiT WT                                                       1
+     BRAF NRAS KIT WT MAP2K1 E102_I103del                                   1
+     MAP2K1 L98_K104>I PTEN, c.464A>G, p.Tyr155Cys                          1
+     unknown                                                                1
+     BRAF NRAS KIT WT PIK3CA, c.3140A>T, p.His1047Leu                       1
+     BRAF V600R                                                             1
+     BRAF WT, JAK  P429S                                                    1
+     BRAF WT, NRAS mutated                                                  1
+
+-- tissue  (非空 42/42, 取值 1 种)
+     Melanoma                                                               42
+
+-- treatment  (非空 42/42, 取值 10 种)
+     pembrolizumab                                                          19
+     nivolumab + ipilimumab                                                 11
+     nivolumab                                                              3
+     ipilimumab + IMO2125 (agonist TLR9)                                    2
+     ipilimumab                                                             2
+     spartalizumab + capmatinib                                             1
+     naive                                                                  1
+     L19IL2 + L16TNF                                                        1
+     pembrolizumab (+ temodal)                                              1
+     adoptive cell transfer                                                 1
+
+-- 标题推断: 唯一患者/个体前缀 1 个; 例: ['Melanoma']
+-- 标题例: ['Melanoma_F01_on', 'Melanoma_F01_pre', 'Melanoma_F02_on', 'Melanoma_F02_pre']
+
+========================================================================
+GSE78220  n=28
+========================================================================
+
+-- age (yrs)  (非空 28/28, 取值 22 种)
+     55                                                                     3
+     70                                                                     2
+     63                                                                     2
+     83                                                                     2
+     47                                                                     2
+     66                                                                     1
+     62                                                                     1
+     61                                                                     1
+     51                                                                     1
+     69                                                                     1
+     68                                                                     1

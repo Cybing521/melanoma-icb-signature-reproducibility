@@ -1,0 +1,25 @@
+state	tcr_metric	n	spearman_rho	p_approx	is_primary	p_fdr_bh
+ifng_response	clonality	18	0.2116	0.4055	yes	
+emt	clonality	18	0.063	0.8071	yes	
+antigen_presentation	clonality	18	0.0093	0.9713	yes	
+proliferation	clones_for_50pct	18	0.4202	0.08274	exploratory	0.9093
+proliferation	top1_frac	18	-0.3684	0.1343	exploratory	0.9093
+proliferation	top10_frac	18	-0.3354	0.1766	exploratory	0.9093
+proliferation	clonality	18	-0.3209	0.1976	exploratory	0.9093
+hypoxia	clones_for_50pct	18	0.3087	0.2165	exploratory	0.9093
+ifng_response	top1_frac	18	0.2632	0.2966	exploratory	0.9777
+hypoxia	top1_frac	18	-0.2446	0.3336	exploratory	0.9777
+hypoxia	top10_frac	18	-0.1847	0.4692	exploratory	0.9777
+ifng_response	top10_frac	18	0.1785	0.4846	exploratory	0.9777
+hypoxia	clonality	18	-0.1723	0.5002	exploratory	0.9777
+tnf_nfkb	clonality	18	0.0877	0.7334	exploratory	0.9777
+tnf_nfkb	top1_frac	18	0.0857	0.7395	exploratory	0.9777
+tnf_nfkb	top10_frac	18	0.0671	0.7947	exploratory	0.9777
+antigen_presentation	clones_for_50pct	18	0.0661	0.7977	exploratory	0.9777
+antigen_presentation	top10_frac	18	0.0588	0.8196	exploratory	0.9777
+emt	top1_frac	18	0.0526	0.8383	exploratory	0.9777
+ifng_response	clones_for_50pct	18	-0.0506	0.8445	exploratory	0.9777
+antigen_presentation	top1_frac	18	0.0402	0.8761	exploratory	0.9777
+emt	top10_frac	18	0.0217	0.9331	exploratory	0.9777
+emt	clones_for_50pct	18	-0.0176	0.9458	exploratory	0.9777
+tnf_nfkb	clones_for_50pct	18	-0.0072	0.9777	exploratory	0.9777

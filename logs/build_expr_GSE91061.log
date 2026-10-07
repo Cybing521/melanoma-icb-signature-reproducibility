@@ -1,0 +1,11 @@
+GSE91061 raw 矩阵：22187 行 × 109 样本
+Entrez→Symbol 命中 21838，未命中 349，映射率 98.43%
+去重后唯一符号 21838 个
+样本列 109 个，其中映射到 GSM 109 个
+主分析签名覆盖：
+    HALLMARK_INTERFERON_GAMMA_RESPONSE             198/200  99.0%
+    HALLMARK_ALLOGRAFT_REJECTION                   200/200 100.0%
+    HALLMARK_E2F_TARGETS                           199/200  99.5%
+    HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     199/200  99.5%
+    HALLMARK_HYPOXIA                               198/200  99.0%
+    HALLMARK_TNFA_SIGNALING_VIA_NFKB               200/200 100.0%

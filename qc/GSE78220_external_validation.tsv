@@ -1,0 +1,2 @@
+cohort	spec	n_total	n_PRCR	n_PD	prev_AUC_docs06	AUC_il6_jak_stat3_sd	CI_il6_jak_stat3_sd	AUC_ifng_response_sd	CI_ifng_response_sd	AUC_antigen_presentation_sd	CI_antigen_presentation_sd	AUC_emt_sd	CI_emt_sd
+GSE78220	main_patientlevel_26	26	14	12		0.35714285714285715	[0.149, 0.595]	0.47619047619047616	[0.250, 0.708]	0.4583333333333333	[0.226, 0.685]	0.2619047619047619	[0.101, 0.464]

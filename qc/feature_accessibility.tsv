@@ -1,0 +1,55 @@
+feature	kind	n_genes	n_in_routine_panel	panel_coverage	grade	measured_by	note
+IMPRES_15pairs	基因对打分	15	13	0.8667	A 常规可及	靶向转录组面板 / 甚至 RT-PCR 即可	15 个基因全为已知免疫检查点相关基因，是本项目候选里**临床可及性最高**的一类
+allograft_rejection	Hallmark 签名	200	110	0.55	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+il6_jak_stat3_signaling	Hallmark 签名	87	47	0.5402	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+interferon_alpha_response	Hallmark 签名	97	42	0.433	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+interferon_gamma_response	Hallmark 签名	200	86	0.43	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+inflammatory_response	Hallmark 签名	200	80	0.4	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+angiogenesis	Hallmark 签名	36	14	0.3889	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+tnfa_signaling_via_nfkb	Hallmark 签名	200	72	0.36	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+wnt_beta_catenin_signaling	Hallmark 签名	42	15	0.3571	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+notch_signaling	Hallmark 签名	32	11	0.3438	B 条件可及	bulk RNA-seq / 靶向转录组面板	
+il2_stat5_signaling	Hallmark 签名	199	56	0.2814	C 难可及	bulk RNA-seq / 靶向转录组面板	
+apoptosis	Hallmark 签名	161	43	0.2671	C 难可及	bulk RNA-seq / 靶向转录组面板	
+epithelial_mesenchymal_transition	Hallmark 签名	200	52	0.26	C 难可及	bulk RNA-seq / 靶向转录组面板	
+pi3k_akt_mtor_signaling	Hallmark 签名	105	22	0.2095	C 难可及	bulk RNA-seq / 靶向转录组面板	
+hedgehog_signaling	Hallmark 签名	36	7	0.1944	C 难可及	bulk RNA-seq / 靶向转录组面板	
+kras_signaling_up	Hallmark 签名	200	38	0.19	C 难可及	bulk RNA-seq / 靶向转录组面板	
+tgf_beta_signaling	Hallmark 签名	54	10	0.1852	C 难可及	bulk RNA-seq / 靶向转录组面板	
+hypoxia	Hallmark 签名	200	37	0.185	C 难可及	bulk RNA-seq / 靶向转录组面板	
+complement	Hallmark 签名	200	36	0.18	C 难可及	bulk RNA-seq / 靶向转录组面板	
+apical_junction	Hallmark 签名	200	31	0.155	C 难可及	bulk RNA-seq / 靶向转录组面板	
+glycolysis	Hallmark 签名	200	29	0.145	C 难可及	bulk RNA-seq / 靶向转录组面板	
+p53_pathway	Hallmark 签名	200	29	0.145	C 难可及	bulk RNA-seq / 靶向转录组面板	
+coagulation	Hallmark 签名	138	19	0.1377	C 难可及	bulk RNA-seq / 靶向转录组面板	
+apical_surface	Hallmark 签名	44	6	0.1364	C 难可及	bulk RNA-seq / 靶向转录组面板	
+e2f_targets	Hallmark 签名	200	27	0.135	C 难可及	bulk RNA-seq / 靶向转录组面板	
+uv_response_up	Hallmark 签名	158	21	0.1329	C 难可及	bulk RNA-seq / 靶向转录组面板	
+uv_response_dn	Hallmark 签名	144	19	0.1319	C 难可及	bulk RNA-seq / 靶向转录组面板	
+mtorc1_signaling	Hallmark 签名	200	25	0.125	C 难可及	bulk RNA-seq / 靶向转录组面板	
+estrogen_response_late	Hallmark 签名	200	22	0.11	C 难可及	bulk RNA-seq / 靶向转录组面板	
+cholesterol_homeostasis	Hallmark 签名	74	8	0.1081	C 难可及	bulk RNA-seq / 靶向转录组面板	
+g2m_checkpoint	Hallmark 签名	200	18	0.09	C 难可及	bulk RNA-seq / 靶向转录组面板	
+xenobiotic_metabolism	Hallmark 签名	200	17	0.085	C 难可及	bulk RNA-seq / 靶向转录组面板	
+kras_signaling_dn	Hallmark 签名	200	16	0.08	C 难可及	bulk RNA-seq / 靶向转录组面板	
+estrogen_response_early	Hallmark 签名	200	15	0.075	C 难可及	bulk RNA-seq / 靶向转录组面板	
+unfolded_protein_response	Hallmark 签名	113	8	0.0708	C 难可及	bulk RNA-seq / 靶向转录组面板	
+androgen_response	Hallmark 签名	101	7	0.0693	C 难可及	bulk RNA-seq / 靶向转录组面板	
+dna_repair	Hallmark 签名	150	9	0.06	C 难可及	bulk RNA-seq / 靶向转录组面板	
+myogenesis	Hallmark 签名	200	12	0.06	C 难可及	bulk RNA-seq / 靶向转录组面板	
+mitotic_spindle	Hallmark 签名	199	11	0.0553	C 难可及	bulk RNA-seq / 靶向转录组面板	
+adipogenesis	Hallmark 签名	200	11	0.055	C 难可及	bulk RNA-seq / 靶向转录组面板	
+myc_targets_v2	Hallmark 签名	58	3	0.0517	C 难可及	bulk RNA-seq / 靶向转录组面板	
+heme_metabolism	Hallmark 签名	200	10	0.05	C 难可及	bulk RNA-seq / 靶向转录组面板	
+pancreas_beta_cells	Hallmark 签名	40	2	0.05	C 难可及	bulk RNA-seq / 靶向转录组面板	
+fatty_acid_metabolism	Hallmark 签名	158	7	0.0443	C 难可及	bulk RNA-seq / 靶向转录组面板	
+reactive_oxygen_species_pathway	Hallmark 签名	49	2	0.0408	C 难可及	bulk RNA-seq / 靶向转录组面板	
+myc_targets_v1	Hallmark 签名	200	8	0.04	C 难可及	bulk RNA-seq / 靶向转录组面板	
+peroxisome	Hallmark 签名	104	4	0.0385	C 难可及	bulk RNA-seq / 靶向转录组面板	
+spermatogenesis	Hallmark 签名	135	5	0.037	C 难可及	bulk RNA-seq / 靶向转录组面板	
+protein_secretion	Hallmark 签名	96	3	0.0312	C 难可及	bulk RNA-seq / 靶向转录组面板	
+oxidative_phosphorylation	Hallmark 签名	200	6	0.03	C 难可及	bulk RNA-seq / 靶向转录组面板	
+bile_acid_metabolism	Hallmark 签名	112	3	0.0268	C 难可及	bulk RNA-seq / 靶向转录组面板	
+GSE308433_state_sd	非表达类	0	0	0.0	C 难可及	单核 RNA-seq 状态分散度	需单核测序深度
+GSE308433_cn_dosage	非表达类	0	0	0.0	D 非常规可及	低深度 WGS (lpWGS) 拷贝数	常规 FFPE/IHC 无对应检测
+GSE308435_tcr_clonality	非表达类	0	0	0.0	D 非常规可及	scTCR 文库测序	需配对 TCR 捕获，常规组织检测拿不到

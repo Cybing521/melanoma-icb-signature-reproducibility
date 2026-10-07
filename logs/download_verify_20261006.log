@@ -1,0 +1,20 @@
+共 8 个文件，合计 159.9 MB
+  GSE91061      16.00 MB  GSE91061_BMS038109Sample.hg19KnownGene.fpkm.csv.gz
+  GSE91061       3.40 MB  GSE91061_BMS038109Sample.hg19KnownGene.raw.csv.gz
+  GSE91061      18.00 MB  GSE91061_BMS038109Sample.hg19KnownGene.rld.csv.gz
+  GSE91061       0.00 MB  GSE91061_BMS038109Sample_Cytolytic_Score_20161026.txt.gz
+  GSE78220       6.80 MB  GSE78220_PatientFPKM.xlsx
+  GSE294272    114.00 MB  GSE294272_RAW.tar
+  GSE294272      0.00 MB  filelist.txt
+  GSE244982      1.70 MB  GSE244982_ProcessedData_bulkRNAseq.txt.gz
+[已落库] GSE91061/GSE91061_BMS038109Sample.hg19KnownGene.fpkm.csv.gz 16354905 bytes（列表 16777216）gzip 解压通过
+[完成] GSE91061/GSE91061_BMS038109Sample.hg19KnownGene.raw.csv.gz 3591833 bytes（列表 3565158）gzip 解压通过 md5=804ff683bbe246f733f951467b8a0c8a 用时 95s
+[已落库] GSE91061/GSE91061_BMS038109Sample.hg19KnownGene.rld.csv.gz 19253751 bytes（列表 18874368）gzip 解压通过
+[已落库] GSE91061/GSE91061_BMS038109Sample_Cytolytic_Score_20161026.txt.gz 1825 bytes（列表 1843）gzip 解压通过
+[已落库] GSE78220/GSE78220_PatientFPKM.xlsx 7145318 bytes（列表 7130316）zip 结构完整（11 项）
+[已落库] GSE294272/GSE294272_RAW.tar 119439360 bytes（列表 119537664）tar 可列出 29 项
+[已落库] GSE294272/filelist.txt 2326 bytes（列表 2355）可读非空
+[已落库] GSE244982/GSE244982_ProcessedData_bulkRNAseq.txt.gz 1788575 bytes（列表 1782579）gzip 解压通过
+
+清单已写入 /root/autodl-tmp/melanoma_icb_20261006/meta/suppl_manifest.tsv
+全部文件下载并校验通过

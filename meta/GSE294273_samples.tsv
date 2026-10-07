@@ -1,0 +1,13 @@
+gsm	title	source	characteristics	char::tissue	char::treatment
+GSM8901614	HM002_GEX	lymph node	tissue=lymph node; treatment=Untreated	lymph node	Untreated
+GSM8901615	HM004_GEX	lymph node	tissue=lymph node; treatment=ICI-resistant	lymph node	ICI-resistant
+GSM8901616	HM005_GEX	lymph node	tissue=lymph node; treatment=Untreated	lymph node	Untreated
+GSM8901617	HM006_GEX	lymph node	tissue=lymph node; treatment=ICI-resistant	lymph node	ICI-resistant
+GSM8901618	HM009_GEX	lymph node	tissue=lymph node; treatment=ICI-responder	lymph node	ICI-responder
+GSM8901619	HM012_GEX	lymph node	tissue=lymph node; treatment=Untreated	lymph node	Untreated
+GSM8901620	HM014_GEX	lymph node	tissue=lymph node; treatment=Untreated	lymph node	Untreated
+GSM8901621	HM019_GEX	lymph node	tissue=lymph node; treatment=ICI-resistant	lymph node	ICI-resistant
+GSM8901622	HM026_GEX	lymph node	tissue=lymph node; treatment=ICI-responder	lymph node	ICI-responder
+GSM8901623	HM028_GEX	lymph node	tissue=lymph node; treatment=ICI-resistant	lymph node	ICI-resistant
+GSM8901624	HM035_GEX	lymph node	tissue=lymph node; treatment=ICI-responder	lymph node	ICI-responder
+GSM8901625	HM038_GEX	lymph node	tissue=lymph node; treatment=ICI-responder	lymph node	ICI-responder

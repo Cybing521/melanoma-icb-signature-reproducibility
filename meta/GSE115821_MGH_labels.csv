@@ -1,0 +1,38 @@
+geo_title,mgh_mat_name,response_geo,response_pd1_raw,response_ctla4_raw,response_derived,antibody,patient_id,treatment_state
+148-6-5-14_S9,148-6-5-14_S9,R,SD,,NR,anti-PD-1,MGH Patient 148,PRE Immune Checkpoint Blockade Therapy
+208-10-22-14_S12,208-10-22-14_S12,NR,,non-responder,NR,anti-CTLA-4,MGH Patient 208,On Immune Checkpoint Blockade Therapy
+208-3-11-15_S13,208-3-11-15_S13,NR,non-responder,,NR,anti-PD-1,MGH Patient 208,PRE Immune Checkpoint Blockade Therapy
+208-5-13-15_S14,208-5-13-15_S14,NR,non-responder,,NR,anti-PD-1,MGH Patient 208,On Immune Checkpoint Blockade Therapy
+208-9-10-14_S11,208-9-10-14_S11,NR,,non-responder,NR,anti-CTLA-4,MGH Patient 208,PRE Immune Checkpoint Blockade Therapy
+39-10-31-14_S17,39-10-31-14_S17,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+39-3-31-14_S15,39-3-31-14_S15,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,PRE Immune Checkpoint Blockade Therapy
+39-8-25-14_S16,39-8-25-14_S16,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+42-10-17-14_S3,42-10-17-14_S3,NR,PD,,NR,anti-PD-1,MGH Patient 42,PRE Immune Checkpoint Blockade Therapy (On dabrafenib+trametinib)
+42-11-24-14_S4,42-11-24-14_S4,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+42-12-30-14_S5,42-12-30-14_S5,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+62-10-2-13_S6,62-10-2-13_S6,NR,PD,PD,NR,anti-PD-1+anti-CTLA-4,MGH Patient 62,PRE Immune Checkpoint Blockade Therapy
+62-5-27-14_S7,62-5-27-14_S7,NR,PD,PD,NR,anti-PD-1+anti-CTLA-4,MGH Patient 62,On Immune Checkpoint Blockade Therapy
+62-7-8-14_S8,62-7-8-14_S8,NR,PD,,NR,anti-PD-1,MGH Patient 62,On Immune Checkpoint Blockade Therapy
+115-031814,115-031814,NR,,PD,NR,anti-CTLA-4,MGH Patient 115,PRE Immune Checkpoint Blockade Therapy
+115-041514,115-041514,NR,,PD,NR,anti-CTLA-4,MGH Patient 115,On Immune Checkpoint Blockade Therapy
+MGH272-020415.bam,272-020415,NR,,PD,NR,anti-CTLA-4,MGH Patient 272,On Immune Checkpoint Blockade Therapy
+MGH272-121914.bam,272-121914,NR,,PD,NR,anti-CTLA-4,MGH Patient 272,PRE Immune Checkpoint Blockade Therapy
+MGH422-092815.bam,422-092815,R,responder,responder,R,anti-PD-1+anti-CTLA-4,MGH Patient 422,PRE Immune Checkpoint Blockade Therapy
+MGH422-110515.bam,422-110515,R,responder,responder,R,anti-PD-1+anti-CTLA-4,MGH Patient 422,On Immune Checkpoint Blockade Therapy
+MGH39_082514-1.bam,MGH39_082514-1.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+MGH42_101714.bam,MGH42_101714.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,PRE Immune Checkpoint Blockade Therapy (On dabrafenib+trametinib)
+MGH208_051315.bam,MGH208_051315.bam,NR,none,,,anti-PD-1,MGH Patient 208,On Immune Checkpoint Blockade Therapy
+MGH208_031115-2.bam,MGH208_031115-2.bam,NR,none,,,anti-PD-1,MGH Patient 208,PRE Immune Checkpoint Blockade Therapy
+MGH42_112414.bam,MGH42_112414.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+MGH39_082514-4.bam,MGH39_082514-4.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+MGH39_082514-3.bam,MGH39_082514-3.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+MGH39_033114.bam,MGH39_033114.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,PRE Immune Checkpoint Blockade Therapy
+MGH42_122914-1.bam,MGH42_122914-1.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+MGH39_082514-5.bam,MGH39_082514-5.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+MGH208_031115-1.bam,MGH208_031115-1.bam,NR,none,,,anti-PD-1,MGH Patient 208,PRE Immune Checkpoint Blockade Therapy
+MGH39_082514-2.bam,MGH39_082514-2.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+MGH39_103114.bam,MGH39_103114.bam,NR,mixed / PD,,NR,anti-PD-1,MGH Patient 39,On Immune Checkpoint Blockade Therapy
+MGH42_112414_1.bam,MGH42_112414_1.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+MGH42_122914_1.bam,MGH42_122914_1.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+MGH42_122914-2_1.bam,MGH42_122914-2_1.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,On Immune Checkpoint Blockade Therapy
+MGH42_101714_1.bam,MGH42_101714_1.bam,NR,PD,,NR,anti-PD-1,MGH Patient 42,PRE Immune Checkpoint Blockade Therapy (On dabrafenib+trametinib)

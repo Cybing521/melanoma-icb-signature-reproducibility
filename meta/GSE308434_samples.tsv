@@ -1,0 +1,43 @@
+gsm	title	source	characteristics	char::cell type	char::genotype	char::tissue	char::treatment
+GSM9245398	Melanoma_F01_on	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600E; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF V600E	Melanoma	nivolumab + ipilimumab
+GSM9245399	Melanoma_F01_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600E; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF V600E	Melanoma	nivolumab + ipilimumab
+GSM9245400	Melanoma_F02_on	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600K CTNNB1 H36Y; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF V600K CTNNB1 H36Y	Melanoma	nivolumab + ipilimumab
+GSM9245401	Melanoma_F02_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600K CTNNB1 H36Y; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF V600K CTNNB1 H36Y	Melanoma	nivolumab + ipilimumab
+GSM9245402	Melanoma_F03_post1_on2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF K601_T604delins; treatment=spartalizumab + capmatinib	tumor cell (nuclei)	BRAF K601_T604delins	Melanoma	spartalizumab + capmatinib
+GSM9245403	Melanoma_F03_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF K601_T604delins; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF K601_T604delins	Melanoma	nivolumab + ipilimumab
+GSM9245404	Melanoma_F04_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61R; treatment=nivolumab	tumor cell (nuclei)	NRAS Q61R	Melanoma	nivolumab
+GSM9245405	Melanoma_F05_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61L CTNNB1 S38Y; treatment=pembrolizumab	tumor cell (nuclei)	NRAS Q61L CTNNB1 S38Y	Melanoma	pembrolizumab
+GSM9245406	Melanoma_F06_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61R; treatment=pembrolizumab	tumor cell (nuclei)	NRAS Q61R	Melanoma	pembrolizumab
+GSM9245407	Melanoma_F07_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600E; treatment=pembrolizumab	tumor cell (nuclei)	BRAF V600E	Melanoma	pembrolizumab
+GSM9245408	Melanoma_F08_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61R BRAF p.K60E exon15 BRAF p.S467L exon 11 TERT C250T (c.-146C>T); treatment=nivolumab + ipilimumab	tumor cell (nuclei)	NRAS Q61R BRAF p.K60E exon15 BRAF p.S467L exon 11 TERT C250T (c.-146C>T)	Melanoma	nivolumab + ipilimumab
+GSM9245409	Melanoma_F09_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF NRAS KIT WT	Melanoma	pembrolizumab
+GSM9245410	Melanoma_F10_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61L; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	NRAS Q61L	Melanoma	nivolumab + ipilimumab
+GSM9245411	Melanoma_F12_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF NRAS KIT WT	Melanoma	nivolumab + ipilimumab
+GSM9245412	Melanoma_F12_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT; treatment=naive	tumor cell (nuclei)	BRAF NRAS KIT WT	Melanoma	naive
+GSM9245413	Melanoma_F15_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT TP53 (M237I); treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF NRAS KIT WT TP53 (M237I)	Melanoma	nivolumab + ipilimumab
+GSM9245414	Melanoma_F16_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61R; treatment=pembrolizumab	tumor cell (nuclei)	NRAS Q61R	Melanoma	pembrolizumab
+GSM9245415	Melanoma_F16_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KiT WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF NRAS KiT WT	Melanoma	pembrolizumab
+GSM9245416	Melanoma_F17_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT MAP2K1 E102_I103del; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	BRAF NRAS KIT WT MAP2K1 E102_I103del	Melanoma	nivolumab + ipilimumab
+GSM9245417	Melanoma_F18_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=MAP2K1 L98_K104>I PTEN, c.464A>G, p.Tyr155Cys; treatment=nivolumab + ipilimumab	tumor cell (nuclei)	MAP2K1 L98_K104>I PTEN, c.464A>G, p.Tyr155Cys	Melanoma	nivolumab + ipilimumab
+GSM9245418	Melanoma_F20_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61R; treatment=nivolumab	tumor cell (nuclei)	NRAS Q61R	Melanoma	nivolumab
+GSM9245419	Melanoma_F22_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600E; treatment=L19IL2 + L16TNF	tumor cell (nuclei)	BRAF V600E	Melanoma	L19IL2 + L16TNF
+GSM9245420	Melanoma_F23_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=unknown; treatment=pembrolizumab	tumor cell (nuclei)	unknown	Melanoma	pembrolizumab
+GSM9245421	Melanoma_F25_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT PIK3CA, c.3140A>T, p.His1047Leu; treatment=pembrolizumab	tumor cell (nuclei)	BRAF NRAS KIT WT PIK3CA, c.3140A>T, p.His1047Leu	Melanoma	pembrolizumab
+GSM9245422	Melanoma_F26_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF NRAS KIT WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF NRAS KIT WT	Melanoma	pembrolizumab
+GSM9245423	Melanoma_F27_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600R; treatment=pembrolizumab	tumor cell (nuclei)	BRAF V600R	Melanoma	pembrolizumab
+GSM9245424	Melanoma_F28_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61R; treatment=ipilimumab + IMO2125 (agonist TLR9)	tumor cell (nuclei)	NRAS Q61R	Melanoma	ipilimumab + IMO2125 (agonist TLR9)
+GSM9245425	Melanoma_F29_post1_pre2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61K; treatment=ipilimumab + IMO2125 (agonist TLR9)	tumor cell (nuclei)	NRAS Q61K	Melanoma	ipilimumab + IMO2125 (agonist TLR9)
+GSM9245426	Melanoma_F30_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61K; treatment=pembrolizumab (+ temodal)	tumor cell (nuclei)	NRAS Q61K	Melanoma	pembrolizumab (+ temodal)
+GSM9245427	Melanoma_F31_post	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NRAS Q61K; treatment=nivolumab	tumor cell (nuclei)	NRAS Q61K	Melanoma	nivolumab
+GSM9245428	Melanoma_R204_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF WT, JAK  P429S; treatment=pembrolizumab	tumor cell (nuclei)	BRAF WT, JAK  P429S	Melanoma	pembrolizumab
+GSM9245429	Melanoma_R294_on	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF WT	Melanoma	pembrolizumab
+GSM9245430	Melanoma_R308_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600E; treatment=pembrolizumab	tumor cell (nuclei)	BRAF V600E	Melanoma	pembrolizumab
+GSM9245431	Melanoma_R310_on1	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NA; treatment=pembrolizumab	tumor cell (nuclei)	NA	Melanoma	pembrolizumab
+GSM9245432	Melanoma_R310_on2	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NA; treatment=pembrolizumab	tumor cell (nuclei)	NA	Melanoma	pembrolizumab
+GSM9245433	Melanoma_R310_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF V600E; treatment=adoptive cell transfer	tumor cell (nuclei)	BRAF V600E	Melanoma	adoptive cell transfer
+GSM9245434	Melanoma_R319_on	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=NA; treatment=pembrolizumab	tumor cell (nuclei)	NA	Melanoma	pembrolizumab
+GSM9245435	Melanoma_R319_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF WT, NRAS mutated; treatment=ipilimumab	tumor cell (nuclei)	BRAF WT, NRAS mutated	Melanoma	ipilimumab
+GSM9245436	Melanoma_R328_on	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF WT	Melanoma	pembrolizumab
+GSM9245437	Melanoma_R329_on	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF WT	Melanoma	pembrolizumab
+GSM9245438	Melanoma_R334_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF/NRAS WT; treatment=pembrolizumab	tumor cell (nuclei)	BRAF/NRAS WT	Melanoma	pembrolizumab
+GSM9245439	Melanoma_R354_pre	Melanoma	tissue=Melanoma; cell type=tumor cell (nuclei); genotype=BRAF/NRAS WT; treatment=ipilimumab	tumor cell (nuclei)	BRAF/NRAS WT	Melanoma	ipilimumab

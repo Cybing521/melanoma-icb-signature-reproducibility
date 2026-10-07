@@ -1,0 +1,9 @@
+GSE78220 FPKM 矩阵：25268 个符号 × 28 样本
+样本列 28 个，映射到 GSM 28 个
+主分析签名覆盖：
+    HALLMARK_INTERFERON_GAMMA_RESPONSE             196/200  98.0%
+    HALLMARK_ALLOGRAFT_REJECTION                   195/200  97.5%
+    HALLMARK_E2F_TARGETS                           195/200  97.5%
+    HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     197/200  98.5%
+    HALLMARK_HYPOXIA                               192/200  96.0%
+    HALLMARK_TNFA_SIGNALING_VIA_NFKB               197/200  98.5%

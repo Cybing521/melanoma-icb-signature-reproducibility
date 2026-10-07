@@ -1,0 +1,21 @@
+# 外部下载的参考数据：不入仓，由脚本按 URL 复现
+resources/*.gene_info.gz
+resources/hallmark_2024.1.Hs.gmt
+
+# 服务器侧原始数据与中间产物（体积大，且由 scripts/02–04 按 URL 重建）
+data/
+work/
+logs/raw/
+
+# 中间产物：逐细胞簇归属（85167 行），由 scripts/21 从 h5ad 重建
+qc/scrna_obs.tsv
+qc/*_oof_predictions.tsv
+
+# 修复前的过期副本（缺 library 列，权威版在 qc/ 下）
+qc_GSE308435_tcr_clonality.tsv
+
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/

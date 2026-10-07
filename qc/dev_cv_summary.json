@@ -1,0 +1,20 @@
+{
+  "n_patients": 33,
+  "n_positive": 10,
+  "n_features_candidate": 17,
+  "n_outer_folds": 100,
+  "n_outer_repeats": 20,
+  "cv_auc_mean": 0.5495,
+  "cv_auc_sd": 0.2565,
+  "cv_auc_min": 0.0,
+  "cv_auc_max": 1.0,
+  "best_single_feature": {
+    "feature": "glycolysis",
+    "mean_auc": 0.2528,
+    "sd_auc": 0.1831
+  },
+  "seed": 20261007,
+  "max_features": 10,
+  "selector": "topk_auc",
+  "note": "特征筛选只在内层训练折发生；未做任何全数据单变量扫描"
+}

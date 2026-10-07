@@ -1,0 +1,9 @@
+GSE294272 featureCounts：29 个样本，合并后 50775 个基因
+每样本基因数中位 50775
+主分析签名覆盖：
+    HALLMARK_INTERFERON_GAMMA_RESPONSE             193/200  96.5%
+    HALLMARK_ALLOGRAFT_REJECTION                   195/200  97.5%
+    HALLMARK_E2F_TARGETS                           193/200  96.5%
+    HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION     194/200  97.0%
+    HALLMARK_HYPOXIA                               191/200  95.5%
+    HALLMARK_TNFA_SIGNALING_VIA_NFKB               196/200  98.0%

@@ -1,0 +1,11 @@
+state_side	dose_side	n	spearman_rho	p_approx	is_primary	p_fdr_bh
+antigen_presentation_sd	cn_dosage_antigen_presentation	39	0.3082	0.05595	yes	
+ifng_response_sd	cn_dosage_ifng_response	39	0.2827	0.08118	yes	
+emt_sd	cn_dosage_emt	39	-0.0534	0.7485	yes	
+hypoxia_sd	cn_dosage_hypoxia	39	0.3196	0.0469	exploratory	0.3171
+cna_burden	clonality	15	0.3857	0.1588	exploratory	0.3171
+proliferation_sd	cn_dosage_proliferation	39	0.2293	0.1613	exploratory	0.3171
+cna_burden	top10_frac	15	0.3679	0.1812	exploratory	0.3171
+cna_burden	top1_frac	15	0.2464	0.3834	exploratory	0.5368
+cna_burden	clones_for_50pct	15	-0.1821	0.5234	exploratory	0.557
+tnf_nfkb_sd	cn_dosage_tnf_nfkb	39	0.0976	0.557	exploratory	0.557

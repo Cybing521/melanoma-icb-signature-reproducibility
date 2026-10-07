@@ -1,0 +1,169 @@
+[
+  {
+    "gse": "GSE308434",
+    "role": "纵向 ICB 单核转录组",
+    "registered_n": 42,
+    "matrix_n": 42,
+    "status": "ok",
+    "error": null,
+    "response_keys": [],
+    "patient_keys": [],
+    "timepoint_keys": [
+      "treatment"
+    ],
+    "sample_value_preview": {},
+    "series_title": "\"Tumor-intrinsic and extrinsic immune mechanisms define resistance to immune checkpoint blockade in metastatic melanoma [snRNA]\"",
+    "unique_titles": 42,
+    "characteristic_keys": [
+      "cell type",
+      "genotype",
+      "tissue",
+      "treatment"
+    ]
+  },
+  {
+    "gse": "GSE294273",
+    "role": "淋巴结 scRNA-seq",
+    "registered_n": 12,
+    "matrix_n": 12,
+    "status": "ok",
+    "error": null,
+    "response_keys": [],
+    "patient_keys": [],
+    "timepoint_keys": [
+      "treatment"
+    ],
+    "sample_value_preview": {},
+    "series_title": "\"Tumor-resident T cells and dendritic cells form an in situ archetype for immunotherapy response in melanoma [scRNA-seq]\"",
+    "unique_titles": 12,
+    "characteristic_keys": [
+      "tissue",
+      "treatment"
+    ]
+  },
+  {
+    "gse": "GSE294272",
+    "role": "淋巴结 bulk RNA-seq",
+    "registered_n": 29,
+    "matrix_n": 29,
+    "status": "ok",
+    "error": null,
+    "response_keys": [],
+    "patient_keys": [],
+    "timepoint_keys": [
+      "treatment"
+    ],
+    "sample_value_preview": {},
+    "series_title": "\"Tumor-resident T cells and dendritic cells form an in situ archetype for immunotherapy response in melanoma [bulk RNA-seq]\"",
+    "unique_titles": 29,
+    "characteristic_keys": [
+      "tissue",
+      "treatment"
+    ]
+  },
+  {
+    "gse": "GSE78220",
+    "role": "治疗前 bulk ICB",
+    "registered_n": 28,
+    "matrix_n": 28,
+    "status": "ok",
+    "error": null,
+    "response_keys": [
+      "anti-pd-1 response"
+    ],
+    "patient_keys": [
+      "patient id"
+    ],
+    "timepoint_keys": [
+      "overall survival (days)",
+      "previous mapki",
+      "treatment"
+    ],
+    "sample_value_preview": {
+      "anti-pd-1 response": [
+        "Complete Response",
+        "Partial Response",
+        "Progressive Disease"
+      ]
+    },
+    "series_title": "\"mRNA expressions in pre-treatment melanomas undergoing anti-PD-1 checkpoint inhibition therapy\"",
+    "unique_titles": 28,
+    "characteristic_keys": [
+      "age (yrs)",
+      "anatomical location",
+      "anti-pd-1 response",
+      "biopsy time",
+      "braf",
+      "disease status",
+      "gender",
+      "nf1",
+      "nras",
+      "overall survival (days)",
+      "patient id",
+      "previous mapki",
+      "stranded/unstranded rnaseq",
+      "study site",
+      "tissue",
+      "treatment",
+      "vital status"
+    ]
+  },
+  {
+    "gse": "GSE91061",
+    "role": "ICB bulk（含两瘤种）",
+    "registered_n": 109,
+    "matrix_n": 109,
+    "status": "ok",
+    "error": null,
+    "response_keys": [
+      "response"
+    ],
+    "patient_keys": [],
+    "timepoint_keys": [
+      "visit (pre or on treatment)"
+    ],
+    "sample_value_preview": {
+      "response": [
+        "PD",
+        "PRCR",
+        "SD",
+        "UNK"
+      ]
+    },
+    "series_title": "\"Molecular portraits of tumor mutational and micro-environmental sculpting by immune checkpoint blockade therapy\"",
+    "unique_titles": 109,
+    "characteristic_keys": [
+      "response",
+      "tissue",
+      "visit (pre or on treatment)"
+    ]
+  },
+  {
+    "gse": "GSE244982",
+    "role": "进展后 bulk ICB",
+    "registered_n": 41,
+    "matrix_n": 41,
+    "status": "ok",
+    "error": null,
+    "response_keys": [],
+    "patient_keys": [],
+    "timepoint_keys": [
+      "previous. brafi",
+      "stage",
+      "treatment"
+    ],
+    "sample_value_preview": {},
+    "series_title": "\"Molecular patterns of resistance to immune checkpoint blockade in melanoma [bulk RNA-Seq]\"",
+    "unique_titles": 41,
+    "characteristic_keys": [
+      "gender",
+      "groups",
+      "previous. brafi",
+      "prior.ctla4i",
+      "stage",
+      "tissue",
+      "treatment",
+      "type.of.primary"
+    ]
+  }
+]

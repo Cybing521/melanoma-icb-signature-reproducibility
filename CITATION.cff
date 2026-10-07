@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the associated manuscript."
+title: "Are published immune-checkpoint-blockade response signatures reproducible? A pre-registered negative study in melanoma"
+abstract: >-
+  A pre-registered, multi-cohort reproducibility study of published immune
+  checkpoint blockade response signatures in melanoma using exclusively public
+  data. Two signatures with mathematically different constructions and
+  independent origins both failed to reproduce their published performance in
+  independent cohorts, while four standard technical explanations for a negative
+  result were each tested and excluded.
+type: software
+license: MIT
+version: "1.0.0"
+date-released: "2026-10-07"
+keywords:
+  - melanoma
+  - immune checkpoint blockade
+  - reproducibility
+  - pre-registration
+  - bioinformatics

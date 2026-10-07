@@ -1,0 +1,8 @@
+[          ok] GSE308434 纵向 ICB 单核转录组: 登记 42 / 实得 42
+[          ok] GSE294273 淋巴结 scRNA-seq: 登记 12 / 实得 12
+[          ok] GSE294272 淋巴结 bulk RNA-seq: 登记 29 / 实得 29
+[          ok] GSE78220 治疗前 bulk ICB: 登记 28 / 实得 28
+[          ok] GSE91061 ICB bulk（含两瘤种）: 登记 109 / 实得 109
+[          ok] GSE244982 进展后 bulk ICB: 登记 41 / 实得 41
+
+报告已写入 logs/data_gate_report.md
