@@ -25,3 +25,7 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
+
+# .NET 构建产物（稿件生成器）
+manuscript/ManuscriptBuilder/bin/
+manuscript/ManuscriptBuilder/obj/

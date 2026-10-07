@@ -24,6 +24,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.patches import FancyArrowPatch, Rectangle
+from scipy import stats as _st
+
+
+def power_at(auc: float, n1: int, n2: int) -> float:
+    """Hanley–McNeil 口径下检出「真实 AUC 高于 0.50」的单侧功效。
+
+    与 `scripts/25_power_analysis.py` 同一公式，图形与数字必须同源。
+    """
+    import math
+    a = min(max(auc, 1e-6), 1 - 1e-6)
+    q1, q2 = a / (2 - a), 2 * a * a / (1 + a)
+    var = (a * (1 - a) + (n1 - 1) * (q1 - a * a) + (n2 - 1) * (q2 - a * a)) / (n1 * n2)
+    se = math.sqrt(max(var, 1e-12))
+    return float(_st.norm.cdf((a - 0.50) / se - 1.959963985))
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -224,12 +238,12 @@ def fig2_headline() -> None:
     ip = pd.read_csv(QC / "IPS_MHCCP_auc.tsv", sep="\t")
 
     fig = plt.figure(figsize=(FULL_W * 0.86, 88 * MM))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.15, 1.0, 1.05], wspace=0.30)
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.12, 1.0, 1.02], wspace=0.52)
 
     # ---- (a) IMPRES 三队列森林图 ----
     ax = fig.add_subplot(gs[0, 0])
     panel(ax, "a")
-    ax.set_title("Signature 1 — IMPRES", loc="left", fontweight="bold")
+    ax.set_title("1 — IMPRES", loc="left", fontweight="bold", fontsize=FONT_SIZE)
     rows = [
         ("GSE91061  n=33", 0.359, 0.172, 0.552),
         ("GSE78220  n=26", 0.298, 0.122, 0.521),
@@ -243,7 +257,7 @@ def fig2_headline() -> None:
     ax.text(0.85, -0.42, "published\nrange", fontsize=6, ha="center",
             va="top", color="#C0392B")
     ax.set_yticks(range(len(rows)))
-    ax.set_yticklabels([r[0] for r in rows], fontsize=6.4)
+    ax.set_yticklabels([r[0] for r in rows], fontsize=6.2)
     ax.set_xlim(0, 1.02)
     ax.set_ylim(-0.6, 2.95)
     ax.set_xlabel("AUC (95% bootstrap CI)")
@@ -254,7 +268,7 @@ def fig2_headline() -> None:
     # ---- (b) IPS-MHCCP 森林图 ----
     ax = fig.add_subplot(gs[0, 1])
     panel(ax, "b")
-    ax.set_title("Signature 2 — IPS-MHC+CP", loc="left", fontweight="bold")
+    ax.set_title("2 — IPS-MHC+CP", loc="left", fontweight="bold", fontsize=FONT_SIZE)
     sub = ip[ip["orientation"] == "high_ips_responder"]
     names = ["GSE91061  n=33", "GSE78220  n=26", "GSE215868  n=79"]
     for i, (_, r) in enumerate(sub.iterrows()):
@@ -264,7 +278,7 @@ def fig2_headline() -> None:
     ax.axvline(0.5, ls="--", lw=0.9, color=C_NULL, zorder=0)
     ax.axvspan(0.70, 1.0, color="#FDECEA", zorder=0)
     ax.set_yticks(range(3))
-    ax.set_yticklabels(names, fontsize=6.4)
+    ax.set_yticklabels(names, fontsize=6.2)
     ax.set_xlim(0, 1.02)
     ax.set_ylim(-0.6, 2.6)
     ax.set_xlabel("AUC (95% bootstrap CI)")
@@ -275,7 +289,8 @@ def fig2_headline() -> None:
     # ---- (c) 两个签名的方向一致性对比 ----
     ax = fig.add_subplot(gs[0, 2])
     panel(ax, "c")
-    ax.set_title("Direction consistency", loc="left", fontweight="bold")
+    ax.set_title("3 — Direction consistency", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE)
     imp_vals = [0.359, 0.298, 0.505]
     ips_vals = [0.604, 0.583, 0.591]
     x = np.arange(3)
@@ -285,55 +300,56 @@ def fig2_headline() -> None:
             label="IPS-MHC+CP (consistent)")
     ax.axhline(0.5, ls="--", lw=0.9, color=C_NULL)
     ax.axhline(0.70, ls=":", lw=0.9, color="#C0392B")
-    ax.text(0.02, 0.715, "reproduction bar", fontsize=6, color="#C0392B",
-            ha="left", va="bottom", transform=ax.get_yaxis_transform())
+    ax.text(0.99, 0.705, "reproduction bar", fontsize=6, color="#C0392B",
+            ha="right", va="bottom", transform=ax.get_yaxis_transform())
     ax.set_xticks(x)
-    ax.set_xticklabels(["GSE91061", "GSE78220", "GSE215868"], fontsize=6.6)
-    ax.set_ylabel("AUC (high score = responder)")
+    ax.set_xticklabels(["91061", "78220", "215868"], fontsize=6.4)
+    ax.set_xlabel("cohort", fontsize=6.6, labelpad=1)
+    ax.set_ylabel("AUC", labelpad=1)
     ax.set_ylim(0.2, 0.78)
-    ax.legend(frameon=False, loc="upper left", fontsize=6.2)
+    ax.legend(frameon=False, loc="lower left", fontsize=6.0,
+              bbox_to_anchor=(0.02, 0.02), ncol=1, handletextpad=0.4)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
-    ax.text(0.98, 0.03,
-            "Neither reaches 0.70, so neither is\nreported as reproduced.\n"
-            "They nonetheless fail differently.",
-            transform=ax.transAxes, fontsize=6.2, style="italic", color=C_GREY)
 
     save(fig, "Figure2_SignaturePerformance")
 
 
 # ================================================================ Figure 3
 def fig3_exclusions() -> None:
-    """为什么四个技术性辩解都不成立。"""
+    """七项技术性辩解逐条排除 + 两项不可排除。
+
+    图注与图必须一一对应：初版只画了 3 项，图注却写「七项已排除 + 两项不可排除」，
+    属图文不符。本版按 2×3 面板补齐全部条目，底部横条写明不可排除的两项。
+    """
     inv = pd.read_csv(QC / "GSE215868_impres_invariant_check.tsv", sep="\t")
     diag = pd.read_csv(QC / "GSE215868_panel_diagnostic.tsv", sep="\t")
     var = pd.read_csv(QC / "GSE215868_score_variance.tsv", sep="\t")
+    strat = pd.read_csv(QC / "stratified_auc.tsv", sep="\t")
 
-    fig = plt.figure(figsize=(FULL_W, 88 * MM))
-    gs = fig.add_gridspec(1, 3, wspace=0.40)
+    fig = plt.figure(figsize=(FULL_W, 146 * MM))
+    gs = fig.add_gridspec(2, 3, hspace=0.70, wspace=0.46,
+                          left=0.055, right=0.985, top=0.945, bottom=0.235)
 
-    # ---- (a) 归一化不变量 ----
+    # ================= (a) 1–2 实现与归一化 =================
     ax = fig.add_subplot(gs[0, 0])
     panel(ax, "a")
     n_ok = int(inv["identical_to_raw"].sum())
     n_all = len(inv)
     ax.barh([0], [n_all], color="#E8E8E8", height=0.34)
     ax.barh([0], [n_ok], color=C_ACC, height=0.34)
-    ax.text(n_all + 0.35, 0, f"{n_ok}/{n_all}", va="center", fontsize=15,
+    ax.text(n_all + 0.4, 0, f"{n_ok}/{n_all}", va="center", fontsize=15,
             fontweight="bold", color=C_ACC)
-    ax.set_xlim(0, n_all * 1.6)
+    ax.set_xlim(0, n_all * 1.7)
     ax.set_ylim(-0.55, 0.55)
     ax.set_yticks([])
-    ax.set_xlabel("normalisation × direction combinations")
-    ax.set_title("1–2. Implementation and\nnormalisation", fontsize=FONT_SIZE,
-                 fontweight="bold", loc="left")
-    ax.text(0.5, -0.34, "All give identical per-sample scores.\nIMPRES is invariant to any\nmonotone transform.",
-            transform=ax.transAxes, ha="center", va="top", fontsize=6.4,
-            style="italic", color=C_GREY, linespacing=1.45)
+    ax.set_xlabel("normalisation × direction combinations", fontsize=6.4)
+    ax.set_title("1–2. Implementation\nand normalisation", loc="left",
+                 fontweight="bold", fontsize=FONT_SIZE, linespacing=1.5)
     for sp in ("top", "right", "left"):
         ax.spines[sp].set_visible(False)
 
-    # ---- (b) 跨平台特征信息量 ----
+    # ================= (b) 3 平台适用性 =================
     ax = fig.add_subplot(gs[0, 1])
     panel(ax, "b")
     order = ["GSE91061", "GSE294272", "GSE215868", "GSE78220", "GSE244982"]
@@ -346,36 +362,120 @@ def fig3_exclusions() -> None:
     ax.axhline(0.5, ls="--", lw=0.9, color=C_NULL)
     ax.set_xticks(range(5))
     ax.set_xticklabels(["91061", "294272", "215868", "78220", "244982"],
-                       fontsize=6.2, rotation=45, ha="right")
-    ax.set_ylabel("features with\np1 ∈ [0.15, 0.85]")
-    ax.set_ylim(0, 1.0)
-    ax.set_title("3. Platform suitability", fontsize=FONT_SIZE,
-                 fontweight="bold", loc="left")
-    ax.text(2, 0.87, "targeted panel\nis not more degenerate",
-            ha="center", fontsize=6.2, color=C_SIGN2, fontweight="bold",
+                       fontsize=6.0, rotation=45, ha="right")
+    ax.set_ylabel("informative features", fontsize=6.4)
+    ax.set_ylim(0, 1.28)
+    ax.set_title("3. Platform suitability", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE)
+    ax.text(2, 1.06, "targeted panel\nis not more degenerate",
+            ha="center", fontsize=6.0, color=C_SIGN2, fontweight="bold",
             linespacing=1.4)
     for sp in ("top", "right"):
         ax.spines[sp].set_visible(False)
 
-    # ---- (c) 方差结构 ----
+    # ================= (c) 3 支撑：分数未退化 =================
     ax = fig.add_subplot(gs[0, 2])
     panel(ax, "c")
     ax.bar(range(len(var)), var["ratio"], color=C_ACC, width=0.58)
     ax.axhline(1.0, ls="--", lw=0.9, color=C_GREY)
     ax.set_xticks(range(len(var)))
     ax.set_xticklabels([v.replace("GSE", "") for v in var["cohort"]],
-                       fontsize=6.2, rotation=45, ha="right")
-    ax.set_ylabel("observed / expected SD")
-    ax.set_ylim(0, 2.05)
-    ax.set_title("4. No score degeneration", fontsize=FONT_SIZE,
-                 fontweight="bold", loc="left")
-    ax.text(0.0, 0.99,
-            "1.0 = variance expected under\nindependent features. All > 1 →\n"
-            "no low-dimensional collapse.",
-            transform=ax.transAxes, fontsize=6.2, va="top", color=C_GREY,
-            linespacing=1.45)
+                       fontsize=6.0, rotation=45, ha="right")
+    ax.set_ylabel("observed / expected SD", fontsize=6.4)
+    ax.set_ylim(0, 2.35)
+    ax.set_title("3. Score not\ndegenerate", loc="left",
+                 fontweight="bold", fontsize=FONT_SIZE, linespacing=1.5)
+    ax.text(0.5, -0.34, "1.0 = variance under independence",
+            transform=ax.transAxes, ha="center", va="top", fontsize=5.8,
+            color=C_GREY)
     for sp in ("top", "right"):
         ax.spines[sp].set_visible(False)
+
+    # ================= (d) 5 活检时点 =================
+    ax = fig.add_subplot(gs[1, 0])
+    panel(ax, "d")
+    vis = strat[(strat["stratum_type"] == "visit") & (strat["stratum"] != "Pre+On")]
+    vis = vis.set_index("stratum").loc[["Pre", "On"]]
+    ys = [1, 0]
+    for y, (idx, r) in zip(ys, vis.iterrows()):
+        ax.plot([r["ci_lo"], r["ci_hi"]], [y, y], color=C_SIGN1, lw=1.8,
+                solid_capstyle="round")
+        ax.plot(r["auc"], y, "o", ms=5.4, color=C_SIGN1, mec="white", mew=0.7)
+    ax.axvline(0.5, ls="--", lw=0.9, color=C_NULL, zorder=0)
+    ax.set_yticks(ys)
+    ax.set_yticklabels([f"{i}  n={int(vis.loc[i, 'n_PRCR'])}/{int(vis.loc[i, 'n_PD'])}"
+                        for i in vis.index], fontsize=6.0)
+    ax.set_xlim(0, 1.02)
+    ax.set_ylim(-0.6, 1.6)
+    ax.set_xlabel("AUC (95% bootstrap CI)", fontsize=6.4)
+    ax.set_title("5. Biopsy\ntimepoint", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE, linespacing=1.5)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+
+    # ================= (e) 6 治疗方案 =================
+    ax = fig.add_subplot(gs[1, 1])
+    panel(ax, "e")
+    rx = strat[(strat["stratum_type"] == "regimen") &
+               (strat["signature"] == "IMPRES g1_low") &
+               (strat["n_PD"] > 0)]
+    rx = rx.set_index("stratum").loc[["IPI+NIVO", "NIVO", "PEMBRO"]]
+    ys = [2, 1, 0]
+    for y, (idx, r) in zip(ys, rx.iterrows()):
+        ax.plot([r["ci_lo"], r["ci_hi"]], [y, y], color=C_SIGN1, lw=1.8,
+                solid_capstyle="round")
+        ax.plot(r["auc"], y, "o", ms=5.4, color=C_SIGN1, mec="white", mew=0.7)
+    ax.axvline(0.5, ls="--", lw=0.9, color=C_NULL, zorder=0)
+    ax.axvspan(0.70, 1.0, color="#FDECEA", zorder=0)
+    ax.set_yticks(ys)
+    ax.set_yticklabels([f"{i}  n={int(rx.loc[i, 'n_PRCR'])}/{int(rx.loc[i, 'n_PD'])}"
+                        for i in rx.index], fontsize=6.0)
+    ax.set_xlim(0, 1.02)
+    ax.set_ylim(-0.6, 2.6)
+    ax.set_xlabel("AUC (95% bootstrap CI)", fontsize=6.4)
+    ax.set_title("6. Treatment\nregimen", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE, linespacing=1.5)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+
+    # ================= (f) 4 样本量（功效曲线） =================
+    ax = fig.add_subplot(gs[1, 2])
+    panel(ax, "f")
+    grid = np.linspace(0.50, 0.85, 220)
+    pw = np.array([power_at(g, 45, 34) for g in grid])
+    ax.plot(grid, pw, color=C_SIGN2, lw=1.8)
+    ax.axhline(0.8, ls=":", lw=0.9, color=C_GREY)
+    ax.axvline(0.70, ls="--", lw=0.9, color=C_NULL)
+    ax.axvline(0.77, ls="--", lw=0.9, color="#C0392B")
+    ax.fill_between(grid, pw, 1.0, where=(pw >= 0.8), color=C_SIGN2, alpha=0.10)
+    for xv, lab, col in ((0.70, "0.70", C_NULL), (0.77, "0.77", "#C0392B")):
+        ax.text(xv + 0.004, 0.06, lab, fontsize=6.0, color=col, rotation=90,
+                va="bottom")
+    ax.text(0.50, 0.84, "0.8 power", fontsize=6.0, color=C_GREY, va="bottom")
+    ax.set_xlabel("true AUC", fontsize=6.4)
+    ax.set_ylabel("power (n = 45 / 34)", fontsize=6.4)
+    ax.set_ylim(0, 1.04)
+    ax.set_xlim(0.50, 0.85)
+    ax.set_title("4. Sample size", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+
+    # ================= 底部横条 =================
+    band = (
+        "Excluded by design and data (7 of 9):\n"
+        "1  implementation error      4  sample size         7  endpoint definition\n"
+        "2  normalisation             5  biopsy timepoint     population composition   ✗\n"
+        "3  platform unsuitability    6  treatment regimen   weakness in the\n"
+        "                                                derivation cohorts   ✗\n"
+        "✗ = the available data cannot exclude this. Item 7 needed no data panel: the native\n"
+        "endpoint of GSE215868 is 24-month long-term benefit (PFS-derived), not RECIST, so response\n"
+        "was re-derived from best overall response to match the endpoint on which IMPRES was reported."
+    )
+    fig.text(0.5, 0.118, band, ha="center", va="top", fontsize=6.0,
+             color="#333333", linespacing=1.75,
+             bbox=dict(boxstyle="round,pad=0.55", facecolor="#F6F6F6",
+                       edgecolor="#CCCCCC"))
 
     save(fig, "Figure3_RuledOutExplanations")
 
@@ -397,24 +497,25 @@ def fig4_cv() -> None:
     # ---- (a) 折 AUC 分布 ----
     ax = fig.add_subplot(gs[0, 0])
     panel(ax, "a")
-    ax.set_title("Per-fold AUC (100 outer folds)", loc="left", fontweight="bold")
+    ax.set_title("Per-fold AUC (100 folds)", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE)
     bins = np.linspace(0, 1, 26)
     ax.hist([a["auc"], b["auc"]], bins=bins, color=[C_GREY, C_SIGN1],
             label=["17 features (as run)", "6 features (pre-registered)"],
             alpha=0.85, edgecolor="white", linewidth=0.3, rwidth=0.92)
     ax.axvline(0.5, color="#C0392B", lw=1.1, ls="--")
-    ax.text(0.52, ax.get_ylim()[1] * 0.92, "chance", color="#C0392B",
-            fontsize=6.4, rotation=90, va="top")
-    ax.set_xlabel("AUC in one outer fold")
+    ax.set_xlabel("AUC in one outer fold  (dashed line = chance)")
     ax.set_ylabel("number of folds")
-    ax.legend(frameon=False, fontsize=6.2, loc="upper left")
+    ax.legend(frameon=False, fontsize=6.0, loc="upper right",
+              bbox_to_anchor=(1.0, 1.0))
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
 
     # ---- (b) 重复间均值 ----
     ax = fig.add_subplot(gs[0, 1])
     panel(ax, "b")
-    ax.set_title("Mean AUC per CV repeat", loc="left", fontweight="bold")
+    ax.set_title("Mean AUC per repeat", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE)
     ra = a.groupby("repeat")["auc"].mean()
     rb = b.groupby("repeat")["auc"].mean()
     ax.scatter(range(1, len(ra) + 1), ra, s=14, color=C_GREY, label="17 features")
@@ -425,14 +526,16 @@ def fig4_cv() -> None:
     ax.set_xlabel("repeat (each = one 5-fold split)")
     ax.set_ylabel("mean AUC")
     ax.set_ylim(0.1, 0.95)
-    ax.legend(frameon=False, fontsize=6.2)
+    ax.legend(frameon=False, fontsize=6.0, loc="lower left", ncol=2,
+              columnspacing=0.9, handletextpad=0.35)
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
 
     # ---- (c) 三个口径 ----
     ax = fig.add_subplot(gs[0, 2])
     panel(ax, "c")
-    ax.set_title("One model, three statistics", loc="left", fontweight="bold")
+    ax.set_title("Three conventions", loc="left", fontweight="bold",
+                 fontsize=FONT_SIZE)
     labels = ["pooled\nOOF", "repeat\nmean", "fold\nmean"]
     v17 = [0.500, 0.516, 0.549]
     v6 = [0.417, 0.408, 0.347]

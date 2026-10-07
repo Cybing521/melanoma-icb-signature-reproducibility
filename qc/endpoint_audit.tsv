@@ -1,0 +1,7 @@
+item	value	implication
+IMPRES 原文报告的终点	RECIST best overall response	—
+GSE91061 原生终点	RECIST	与原文一致
+GSE78220 原生终点	RECIST	与原文一致
+GSE215868 原生终点	24 个月长期获益 LTB（存活且无进展）	**与 RECIST 是不同的构念**：一个患者可 RECIST 达标但 6 个月后进展，也可 RECIST 未达标但长期稳定
+GSE215868 本项目实际使用的标签	由 series matrix `bor`（best overall response）派生 PRCR/PD	**已把终点拉回 RECIST 口径**，与 IMPRES 可比；但代价是丢弃了原作者的 LTB 字段
+剩余风险	`bor` 字段由本项目解析，非原作者提供的分析变量	解析正确性由 `qc/GSE215868_parse_audit.md` 逐项核对；但无法完全排除 `bor` 与正式 RECIST 判读存在差异

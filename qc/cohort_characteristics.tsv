@@ -1,0 +1,4 @@
+cohort	platform	n_samples	n_patients_total	timepoint	regimen	endpoint_native	endpoint_used_here	endpoint_mismatch	relation_to_impres	geo_source
+GSE91061	RNA-seq	109	65	含 Pre 与 On 两类；本项目开发集只用 Pre	nivolumab 单药（CA209-038）	RECIST best overall response	RECIST（与原文口径一致）	无	IMPRES 原文的**验证**队列之一（其参考文献 6）	GSE91061 series matrix characteristic 'visit (pre or on treatment)'
+GSE78220	bulk RNA-seq	28	26	26 例治疗前 / 1 例治疗中	抗 PD-1 单药	RECIST（anti-pd-1 response）	RECIST（与原文口径一致）	无	无直接关系	GSE78220 characteristic 'anti-pd-1 response' / 'biopsy time'
+GSE215868	NanoString IO 360（770 基因）	105	105	**全部为治疗前基线**（系列说明：105 pretreatment samples）	PD-1 轴治疗：IPI+NIVO / PEMBRO / NIVO（混合）	**24 个月长期获益 LTB（PFS 派生），非 RECIST**	由 series matrix 的 `bor` 字段派生 PRCR / PD	**有：原生终点是 PFS 派生 LTB，本项目用的是由 best overall response 派生的二分类**	无直接关系	GSE215868 Series_overall_design / Series_summary（PMID 36522538）

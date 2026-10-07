@@ -1,0 +1,4 @@
+signature	k	n_above_0.5	n_below_0.5	kind	sign_test_p
+IMPRES g1_low	3	1	2	方向不一致	1.0
+IMPRES g2_low	3	2	1	方向不一致	1.0
+IPS-MHC+CP	3	3	0	一致正向	0.25
