@@ -127,7 +127,7 @@ internal static class Program
         styles.Append(MakeStyle("Heading3", "heading 3", sizeHalfPt: 24, bold: true, spaceBefore: 160, outline: 2));
         styles.Append(MakeStyle("Title", "Title", sizeHalfPt: 32, bold: true, spaceBefore: 0));
         styles.Append(MakeStyle("Caption", "caption", sizeHalfPt: 20, bold: false, spaceBefore: 80));
-        styles.Append(MakeStyle("TableText", "Table Text", sizeHalfPt: 18, bold: false, spaceBefore: 20));
+        styles.Append(MakeStyle("TableText", "Table Text", sizeHalfPt: 16, bold: false, spaceBefore: 20));
 
         part.Styles = styles;
         part.Styles.Save();
@@ -253,12 +253,15 @@ internal static class Program
         var tbl = new Table();
         var tblPr = new TableProperties();
         tblPr.Append(new TableWidth { Width = "5000", Type = TableWidthUnitValues.Pct });
+        // 三线表（booktabs）：只有顶线、表头下横线、底线三条。
+        // 无竖线、无行间横线、无底纹——行靠留白分隔，不靠框线。
+        // 边框单位为 1/8 pt：Size=16 → 2 pt（顶/底线），Size=8 → 1 pt（表头线）。
         tblPr.Append(new TableBorders(
-            new TopBorder { Val = BorderValues.Single, Size = 8U, Space = 0U },
-            new BottomBorder { Val = BorderValues.Single, Size = 8U, Space = 0U },
+            new TopBorder { Val = BorderValues.Single, Size = 16U, Space = 0U },
+            new BottomBorder { Val = BorderValues.Single, Size = 16U, Space = 0U },
             new LeftBorder { Val = BorderValues.None },
             new RightBorder { Val = BorderValues.None },
-            new InsideHorizontalBorder { Val = BorderValues.Single, Size = 4U, Space = 0U },
+            new InsideHorizontalBorder { Val = BorderValues.None },
             new InsideVerticalBorder { Val = BorderValues.None }));
         tblPr.Append(new TableCellMarginDefault(
             new TopMargin { Width = "40", Type = TableWidthUnitValues.Dxa },
@@ -295,16 +298,18 @@ internal static class Program
         for (var c = 0; c < nCols; c++) grid.Append(new GridColumn { Width = colW[c].ToString() });
         tbl.Append(grid);
 
-        // 表头行（跨页重复）
+        // 表头行（跨页重复）。表头下的 1 pt 横线是三线表的中间那条，
+        // 只能逐单元格设——表级 InsideHorizontal 已按三线表要求关闭。
         var hdr = new TableRow(new TableRowProperties(new TableHeader(), new CantSplit()));
-        for (var c = 0; c < nCols; c++) hdr.Append(MakeCell(headers[c], colW[c], bold: true, shade: "F2F2F2"));
+        for (var c = 0; c < nCols; c++)
+            hdr.Append(MakeCell(headers[c], colW[c], bold: true, ruleUnder: true));
         tbl.Append(hdr);
 
         foreach (var r in rows)
         {
             var tr = new TableRow(new TableRowProperties(new CantSplit()));
             for (var c = 0; c < nCols; c++)
-                tr.Append(MakeCell(c < r.Length ? r[c] : "", colW[c], bold: false, shade: null));
+                tr.Append(MakeCell(c < r.Length ? r[c] : "", colW[c], bold: false, ruleUnder: false));
             tbl.Append(tr);
         }
         body.AppendChild(tbl);
@@ -313,17 +318,18 @@ internal static class Program
             new SpacingBetweenLines { Before = "0", After = "0", Line = "240", LineRule = LineSpacingRuleValues.Auto })));
     }
 
-    private static TableCell MakeCell(string text, int widthDxa, bool bold, string? shade)
+    private static TableCell MakeCell(string text, int widthDxa, bool bold, bool ruleUnder)
     {
         var tcPr = new TableCellProperties(
             new TableCellWidth { Width = widthDxa.ToString(), Type = TableWidthUnitValues.Dxa });
-        if (shade != null)
-            tcPr.Append(new Shading { Val = ShadingPatternValues.Clear, Color = "auto", Fill = shade });
+        if (ruleUnder)
+            tcPr.Append(new TableCellBorders(
+                new BottomBorder { Val = BorderValues.Single, Size = 8U, Space = 0U }));
         // 单元格内必须至少有一个段落，否则 Word 判定文件损坏
         var para = new Paragraph(new ParagraphProperties(
             new ParagraphStyleId { Val = "TableText" },
             new Justification { Val = JustificationValues.Left },
-            new SpacingBetweenLines { Before = "20", After = "20", Line = "240", LineRule = LineSpacingRuleValues.Auto }));
+            new SpacingBetweenLines { Before = "40", After = "40", Line = "240", LineRule = LineSpacingRuleValues.Auto }));
         var run = new Run();
         if (bold) run.Append(new RunProperties(new Bold()));
         run.Append(new Text(text) { Space = SpaceProcessingModeValues.Preserve });
