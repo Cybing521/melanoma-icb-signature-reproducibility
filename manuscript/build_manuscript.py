@@ -61,32 +61,26 @@ def build() -> dict:
     # ─────────────────────────── 摘要 ───────────────────────────
     B.append(h(1, "Abstract"))
     B.append(p(
-        "Published transcriptomic signatures that predict response to immune checkpoint "
-        "blockade (ICB) are widely used as research baselines, yet their performance is "
-        "rarely re-examined in independent cohorts with pre-specified criteria. We conducted "
-        "a pre-registered reproducibility study using exclusively public data. The primary "
-        "comparison, its endpoints and the criteria for attributing a negative result were "
-        "locked in writing before any computation. Two signatures were tested: IMPRES, a "
-        "pairwise ordering of 15 immune-checkpoint genes, and a reduced Immunophenoscore "
-        "(IPS-MHC+CP) built from 20 MHC and checkpoint genes, chosen because its construction "
-        "is mathematically unrelated to IMPRES and because all 20 genes are covered by a "
-        "routine clinical panel. In the largest independent cohort (79 evaluable patients, "
-        "45 responders / 34 non-responders), IMPRES reached an AUC of 0.505 (95% CI "
-        "0.380–0.631) in the pre-registered direction; IPS-MHC+CP reached 0.591 (0.463–0.714). "
-        "Neither reproduced its published performance, and a cross-cohort meta-analysis of "
-        "study-level estimates (n = 138) did not change the verdict. The two signatures failed "
-        "in different ways: IMPRES was directionally erratic, whereas IPS-MHC+CP produced a "
-        "weak but consistently signed signal that this design can neither confirm nor exclude. "
-        "We prospectively specified seven technical explanations for the negative result and "
-        "addressed each: six were excluded outright, and the seventh, sample size, was excluded "
-        "against the published performance but not against a weak signal. These were "
-        "implementation error, normalisation, platform suitability, "
-        "biopsy timepoint, treatment regimen and endpoint definition; the power analysis shows "
-        "the primary comparison had 0.93 power to detect an AUC of 0.70. Two explanations "
-        "remain: population composition, and the possibility that the signatures are weak in "
-        "their own derivation cohorts. Neither can be tested with the available data. We "
-        "conclude that these signatures should not be assumed to transfer across melanoma ICB "
-        "cohorts, and we provide the sample size a future study would need."))
+        "Published transcriptomic signatures that predict response to immune checkpoint blockade "
+        "(ICB) are widely used as research baselines, yet their performance is rarely re-examined "
+        "in independent cohorts with pre-specified criteria. We conducted a pre-registered "
+        "reproducibility study using exclusively public data, locking the primary comparison, its "
+        "endpoints and the criteria for attributing a negative result in writing before any "
+        "computation. Two signatures were tested: IMPRES, a pairwise ordering of 15 "
+        "immune-checkpoint genes [1], and a reduced Immunophenoscore (IPS-MHC+CP) built from 20 "
+        "MHC and checkpoint genes [2], chosen for a construction unrelated to IMPRES. In the "
+        "largest independent cohort (79 evaluable patients, 45 "
+        "responders / 34 non-responders), IMPRES reached an AUC of 0.505 (95% CI 0.380–0.631) in "
+        "the pre-registered direction and IPS-MHC+CP 0.591 (0.463–0.714); neither "
+        "reproduced its published performance, and a cross-cohort meta-analysis of study-level "
+        "estimates did not change the verdict. They failed differently: IMPRES was directionally "
+        "erratic, IPS-MHC+CP weak but consistently signed. Of seven prospectively specified "
+        "technical explanations, six were excluded outright and sample size, the seventh, "
+        "against the published performance but not a weak signal (power 0.93 at an AUC of 0.70). "
+        "Two explanations remain untestable with public data: population composition, and "
+        "weakness intrinsic to the derivation cohorts. These signatures should therefore not be "
+        "assumed to transfer across melanoma ICB cohorts."
+    ))
     B.append(p("Keywords: immune checkpoint blockade; melanoma; reproducibility; "
                "pre-registration; IMPRES; reduced Immunophenoscore (MHC and checkpoint "
                "classes); treatment response; negative results"))
@@ -99,9 +93,9 @@ def build() -> dict:
         "observed after treatment has begun, considerable effort has gone into identifying "
         "transcriptomic features that predict benefit in advance. Two predictors are now "
         "standard references in this literature: IMPRES, which scores a patient by how often "
-        "each of 15 immune-checkpoint genes is expressed above its paired partner, and the "
+        "each of 15 immune-checkpoint genes is expressed above its paired partner [1], and the "
         "Immunophenoscore (IPS), which aggregates weighted z-scores across 26 immune-related "
-        "gene sets. Both are used less as clinical tests than as comparators against which new "
+        "gene sets [2]. Both are used less as clinical tests than as comparators against which new "
         "models must demonstrate added value."))
     B.append(p(
         "That role makes their reported performance load-bearing. A new signature that fails to "
@@ -166,17 +160,24 @@ def build() -> dict:
         "single patient-level inclusion and exclusion table, generated by one script, is the "
         "source of truth for every n reported in this paper."))
     B.append(p(
-        "Three cohorts carry the primary signature analysis. GSE91061 (RNA-seq; 109 samples, "
+        "Three cohorts carry the primary signature analysis. GSE91061 [3] (RNA-seq; 109 samples, "
         "65 patients) is a nivolumab monotherapy cohort with both pre-treatment and "
         "on-treatment biopsies; the pre-treatment subset of 33 patients (10 partial or complete "
-        "responders, 23 progressors) forms the development set. GSE78220 (bulk RNA-seq; 28 "
+        "responders, 23 progressors) forms the development set. GSE78220 [4] (bulk RNA-seq; 28 "
         "samples, 26 patients; 14 responders, 12 progressors) is an anti-PD-1 monotherapy "
-        "cohort of pre-treatment biopsies. GSE215868 (NanoString IO 360 panel, 770 genes; 105 "
+        "cohort of pre-treatment biopsies. GSE215868 [5] (NanoString IO 360 panel, 770 genes; 105 "
         "samples, 105 patients) is a pre-treatment cohort treated with PD-1 axis blockade; 79 "
-        "patients had a classifiable response (45 responders, 34 progressors). Two further "
-        "cohorts were used for directional and reference checks, and a single-cell / T-cell "
-        "receptor cohort was analysed exploratorily and is reported in the Supplementary "
-        "Material (Section 2.11)."))
+        "patients had a classifiable response (45 responders, 34 progressors). Five further series "
+        "were used, none of them for the primary comparison. GSE244982 [6] supplies "
+        "post-progression biopsies for the resistance-state analysis in Section 3.7 and "
+        "carries no response labels, so it can only be asked whether a model scores "
+        "progressed tumours as expected, never whether it discriminates responders. "
+        "GSE294272 and GSE294273 [7] supply the cell-type reference profile for deconvolution "
+        "and its independent validation. GSE308433, GSE308434 and GSE308435 [8] supply the "
+        "single-cell and T-cell receptor material reported in Supplementary Material S1. "
+        "GSE115821, the IMPRES derivation cohort, is named here for completeness and is "
+        "discussed in Section 4.2; it was never analysed and contributes no data to any result "
+        "in this paper."))
     B.append(p(
         "A data gate preceded every download: series titles, sample counts, characteristic "
         "fields and platform were inspected and recorded before expression matrices were "
@@ -264,7 +265,7 @@ def build() -> dict:
     B.append(h(2, "2.6. De Novo Feature-Based Modelling"))
     B.append(p(
         "In parallel with the signature validations, a feature-based classifier was developed on "
-        "the 33-patient development set, using Hallmark gene sets as features rather than "
+        "the 33-patient development set, using Hallmark gene sets [9] as features rather than "
         "hand-curated gene lists. Model selection was nested: 100 outer folds, feature "
         "selection performed strictly within each training fold, a hard cap of 10 features, and "
         "20 repeats of the entire procedure. The random seed was fixed at 20261007 throughout, "
@@ -296,7 +297,7 @@ def build() -> dict:
         "computed, before interpreting any cohort, the power of the primary comparison to detect "
         "a range of true AUCs, and the sample size required for a confidence interval to exclude "
         "a clinically usable discrimination. Standard errors of the AUC follow Hanley and "
-        "McNeil. Two thresholds were used: 0.70, taken as the lower bound of a usable "
+        "McNeil [10]. Two thresholds were used: 0.70, taken as the lower bound of a usable "
         "discriminator, and 0.77, the lower bound of the cross-cohort AUC range reported for "
         "IMPRES in its original publication."))
     B.append(p(
@@ -306,7 +307,7 @@ def build() -> dict:
         "are the per-cohort AUC estimates computed in this study together with their cohort "
         "sample sizes, and no patient-level record is touched or created. Pooling was performed "
         "on the logit scale, with a fixed-effect "
-        "estimate and a DerSimonian–Laird random-effects estimate; heterogeneity was assessed "
+        "estimate and a DerSimonian–Laird random-effects estimate [11]; heterogeneity was assessed "
         "with Cochran's Q and I². Directional consistency across cohorts was assessed with a "
         "sign test, in which a signature whose point estimates all fall below 0.50 is recorded "
         "as consistently reversed and not as consistent with the published direction."))
@@ -344,7 +345,10 @@ def build() -> dict:
         "published performance only if the 95% interval excluded 0.50 in the pre-registered "
         "direction and the point estimate fell between 0.70 and 1.00. Both directions were "
         "computed for every signature and cohort and all are reported, and no direction was "
-        "selected after the fact. Confidence intervals are reported to three decimal places "
+        "selected after the fact. We do not apply a hierarchy of tests [12]: the mirrored "
+        "direction is reported not as a second look at a negative result, but because the "
+        "pre-registered direction convention of IMPRES is itself unresolved (Section 2.4), so "
+        "both conventions had to be shown. Confidence intervals are reported to three decimal places "
         "throughout. No multiplicity adjustment was applied, and none is claimed: the only "
         "pre-specified inferential tests are the primary comparison and its mirrored counterpart "
         "in each of the three cohorts, and every secondary, pooled and stratified analysis is "
@@ -396,7 +400,8 @@ def build() -> dict:
         "non-responders. Patient-level assembly is what makes these numbers: GSE91061 "
         "contributes 109 biopsies from 65 patients and GSE78220 contributes 28 biopsies from 26 "
         "patients, so counting samples rather than patients would have overstated the evidence "
-        "in both."))
+        "in both. Figure 1 summarises the cohort roles, the patient-level assembly and the "
+        "duplication hazards that produced these numbers."))
     B.append(figure("figures/Figure1_StudyDesign.png",
                     "Figure 1. Study design. (a) cohorts and their roles; (b) the patient-level "
                     "assembly that produces every n used in this paper; (c) the specific "
@@ -476,7 +481,8 @@ def build() -> dict:
         "reported headline value of 0.500 for the deviant model was a pooled out-of-fold AUC in "
         "which each of the 33 patients was counted once per repeat and therefore 20 times. "
         "Under the three registered conventions the same model gives 0.500, 0.516 ± 0.112 and "
-        "0.549 ± 0.257. All three are now reported together (Table 2)."))
+        "0.549 ± 0.257. All three are now reported together (Table 2), and Figure 2 shows them "
+        "side by side for both feature sets."))
     B.append(figure("figures/Figure4_NestedCV.png",
                     "Figure 2. Nested cross-validation performance under the three registered "
                     "AUC conventions, for the pre-registered six-feature Hallmark panel and for the "
@@ -548,7 +554,8 @@ def build() -> dict:
         "The I² of zero should not be read as evidence that the cohorts are "
         "interchangeable; the more parsimonious reading, given how different the cohorts are, "
         "is that the underlying signal is weak enough that population differences are swamped "
-        "by it."))
+        "by it. Table 3 collects every cross-cohort estimate in one place and Figure 3 "
+        "shows them with their intervals."))
 
     B.append(figure("figures/Figure2_SignaturePerformance.png",
                     "Figure 3. Discrimination of both signatures across the three validation "
@@ -584,7 +591,8 @@ def build() -> dict:
 
     B.append(h(2, "3.6. What These Cohorts Can and Cannot Resolve"))
     B.append(p(
-        "The sample size objection deserves a direct answer rather than a concession. In the "
+        "The sample size objection deserves a direct answer rather than a concession, and Table 4 "
+        "gives the powers directly. In the "
         "primary comparison, with 45 responders and 34 non-responders and a one-sided alpha of "
         "0.025, the probability of detecting a true AUC of 0.70 is 0.929, and of detecting a "
         "true AUC of 0.77, the lower bound of the published cross-cohort range, is 0.999. The "
@@ -666,7 +674,9 @@ def build() -> dict:
     B.append(p(
         "* The pooled-visit row is a sample-level quantity resting on 69 biopsies from 65 patients "
         "and is shown for completeness only. The fourth regimen stratum contained one patient and "
-        "is listed so that the table is complete; no AUC can be formed from it."))
+        "is listed so that the table is complete; no AUC can be formed from it. Figure 4 shows "
+        "the artefact used to address each registered explanation, and Table 6 records the "
+        "verdict, including the two that the available data cannot exclude."))
     B.append(figure("figures/Figure3_RuledOutExplanations.png",
                     "Figure 4. The seven technical explanations registered in advance and the artefact used "
                     "to address each, with the two explanations that the available data cannot "
@@ -819,7 +829,9 @@ def build() -> dict:
         "For design, two concrete recommendations follow. Studies of this kind should "
         "pre-register the acceptance criterion, the direction and the list of technical "
         "explanations in advance, because the value of a negative result lies entirely in "
-        "whether it was designed to be interpretable. And they should be powered explicitly "
+        "whether it was designed to be interpretable, and because choosing which of several "
+        "completed analyses to report after seeing their values manufactures significance out "
+        "of a small number of null results [13]. And they should be powered explicitly "
         "against the published comparator rather than against a conventional per-group sample "
         "size: as Section 3.6 shows, 45 and 34 patients is ample to detect the performance these "
         "signatures report, and the same cohort is poorly powered to detect an AUC of 0.60, so "
@@ -845,11 +857,14 @@ def build() -> dict:
     B.append(h(1, "Supplementary Materials"))
     B.append(p(
         "Supplementary Material S1: single-cell analysis (12 patients) and T-cell receptor "
-        "analysis (42 libraries from 34 patients, of whom 7 contributed more than one biopsy), "
-        "comprising quality-control metrics, "
-        "the cluster marker table, the pre-specified tie-break rule and its application, and "
-        "the resulting cell-state scores. Analysis scripts and result files are in the public "
-        "repository."))
+        "analysis (42 libraries from 34 patients, of whom 7 contributed more than one biopsy). "
+        "It is supplied as a single file, Supplementary_Material_S1.pdf, and comprises per-sample "
+        "quality-control metrics, the cluster marker table, the pre-specified tie-break rule and "
+        "its application, the cell-type composition before and after that rule, T-cell receptor "
+        "clonality, and the per-sample cell-state scores. Every number in it is read from the "
+        "result files in the public repository rather than transcribed; it is generated by "
+        "manuscript/build_supplementary.py, and both that script and the analysis scripts that "
+        "produced the underlying result files are in the same repository."))
 
     B.append(h(1, "Author Contributions"))
     B.append(p("Conceptualization, methodology, software, formal analysis, investigation, "
@@ -903,18 +918,35 @@ def build() -> dict:
         "Rimm D.L. Baseline gene expression profiling determines long-term benefit to "
         "programmed cell death protein 1 axis blockade. NPJ Precis. Oncol. 2022, 6, 92. "
         "(Source of GSE215868; native endpoint is 24-month long-term benefit.)",
-        "6. Hanley J.A.; McNeil B.J. The meaning and use of the area under a receiver "
-        "operating characteristic (ROC) curve. Radiology 1982, 143, 29–36.",
-        "7. Deeks J.J.; Keating J.; Leeflang M.M.G. A hierarchy of diagnostic tests. Ann. "
+        "6. Lauss M.; Phung B.; Borch T.H.; Harbst K.; Kaminska K.; Ebbesson A.; Hedenfalk I.; "
+        "Yuan J.; Nielsen K.; Ingvar C.; Carneiro A.; Isaksson K.; Pietras K.; Svane I.M.; "
+        "Donia M.; Jönsson G. Molecular patterns of resistance to immune checkpoint blockade in "
+        "melanoma. Nat. Commun. 2024, 15, 3075. (Source of GSE244982.)",
+        "7. Di Pietro A.; Au L.; Crock P.; Thio N.; Pizzolla A.; Nguyen T.N.; Macdonald S.; "
+        "Chalmers H.; Zhu R.; Airaghi A.; Molden-Hauer T.; Bacac M.; Schwalie P.; Schlenker R.; "
+        "Levesque M.P.; Mailer S.; Barnes-Cullen K.; Winch K.; Chan J.; Yeung G.A.; Spain L.; "
+        "Rao A.D.; Sandhu S.; Gyorki D.E.; McArthur G.A.; Mackay L.K.; Neeson P.J. "
+        "Tumor-resident T cells and dendritic cells form an in situ archetype during "
+        "immunotherapy response in melanoma. Nat. Commun. 2026, 17, 7445. (Source of GSE294272 "
+        "and GSE294273.)",
+        "8. Tumor-intrinsic and extrinsic immune mechanisms define resistance to immune "
+        "checkpoint blockade in metastatic melanoma. GEO Series GSE308433, GSE308434 and "
+        "GSE308435 [Internet]. Columbia University, Izar laboratory; cited by accession because "
+        "no peer-reviewed publication is linked to these accessions in GEO. Available at: "
+        "https://www.ncbi.nlm.nih.gov/geo/ (accessed 7 October 2026). (Source of the single-cell "
+        "and T-cell receptor analyses in Supplementary Material S1.)",
+        "9. Liberzon A.; Birger C.; Thorvaldsdóttir H.; Ghandi M.; Mesirov J.P.; Tamayo P. The "
+        "Molecular Signatures Database (MSigDB) hallmark gene set collection. Cell Syst. 2015, "
+        "1, 417–425. (Source of the feature annotations used in model development.)",
+        "10. Hanley J.A.; McNeil B.J. The meaning and use of the area under a receiver "
+        "operating characteristic (ROC) curve. Radiology 1982, 143, 29–36. (Standard error of "
+        "the AUC, and the basis of the power calculation in Section 2.8.)",
+        "11. DerSimonian R.; Laird N. Meta-analysis in clinical trials. Control. Clin. Trials. "
+        "1986, 7, 177–188. (Method for the study-level pooling in Section 2.8.)",
+        "12. Deeks J.J.; Keating J.; Leeflang M.M.G. A hierarchy of diagnostic tests. Ann. "
         "Intern. Med. 2008, 148, 175–176.",
-        "8. DerSimonian R.; Laird N. Meta-analysis in clinical trials. Control. Clin. Trials. "
-        "1986, 7, 177–188.",
-        "9. Hanley J.A.; Lippman-Hand A. If a coin is tossed 3 times, is it fair? JAMA. 1983, "
+        "13. Hanley J.A.; Lippman-Hand A. If a coin is tossed 3 times, is it fair? JAMA. 1983, "
         "250, 2563–2566.",
-        "10. Liberzon A.; Birger C.; Thorvaldsdóttir H.; Ghandi M.; Mesirov J.P.; "
-        "Tamayo P. The Molecular Signatures Database (MSigDB) hallmark gene set collection. "
-        "Cell Syst. 2015, 1, 417–425. (Source of the feature annotations used in model "
-        "development.)",
     ]:
         B.append(p(ref))
 
