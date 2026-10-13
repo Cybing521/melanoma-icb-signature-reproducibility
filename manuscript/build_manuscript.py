@@ -26,7 +26,9 @@
 
 from __future__ import annotations
 
+import csv
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -44,15 +46,249 @@ def p(text: str) -> dict:
 
 
 def table(caption: str, headers: list[str], rows: list[list[str]],
-          widths: list[float] | None = None) -> dict:
+          widths: list[float] | None = None, key: str | None = None) -> dict:
+    """caption 首部写 [[T:key]] 占位；编号由 resolve_table_refs 按正文出现顺序填。
+
+    为什么不手写「Table 7」：本次补充了 4 张方法表，正文里每一处表号都要跟着挪。
+    手写编号时漏改一处，稿子里就会出现「见 Table 6」指向另一张表——这类错误在
+    Word 里肉眼极难发现，却会被审稿人当作硬伤。这里让脚本编号，规则只有一条：
+    谁先出现谁在前，与参考文献的自动重编号同一思路。
+    """
     d = {"type": "table", "caption": caption, "headers": headers, "rows": rows}
     if widths:
         d["widths"] = widths
+    if key:
+        d["key"] = key
     return d
+
+
+def resolve_table_refs(blocks: list[dict]) -> None:
+    """按表格在正文中的出现顺序编号，并回填所有 [[T:key]] 占位。"""
+    order: dict[str, int] = {}
+    for i, b in enumerate(blocks):
+        if b.get("type") == "table":
+            n = len(order) + 1
+            b["number"] = n
+            if b.get("key"):
+                order[b["key"]] = n
+
+    pat = re.compile(r"\[\[T:([A-Za-z0-9_]+)\]\]")
+
+    def sub(m: re.Match) -> str:
+        key = m.group(1)
+        if key not in order:
+            raise KeyError(f"未定义的表引用 [[T:{key}]]")
+        return f"Table {order[key]}"
+
+    for b in blocks:
+        for field in ("text", "note"):
+            if isinstance(b.get(field), str):
+                b[field] = pat.sub(sub, b[field])
+        if b.get("type") == "table":
+            b["caption"] = pat.sub(sub, b["caption"])
 
 
 def figure(path: str, caption: str, width_mm: float) -> dict:
     return {"type": "figure", "path": path, "caption": caption, "width_mm": width_mm}
+
+
+# ─────────────────────── 公式（OMML） ───────────────────────
+# 为什么用 OMML 而不是纯文本公式：Word 里以 OMML 存储的公式是**可双击编辑的真公式**，
+# 排版由 Word 自己的数学引擎完成（真正的分式、上下标、求和号），投稿时审稿人不会看到
+# 一串用斜杠拼出来的伪公式。纯 Unicode 文本（½、x²、∑）在 Times New Roman 下会
+# 明显不齐，且无法编辑。
+#
+# 为什么公式内容写在 Python 而不是在 C#：公式与正文同属「稿件内容」，必须和正文走同一条
+# 溯源链——改动公式也要在 git 里留痕。下面这些小函数只是 OMML 元素的语法糖，
+# 拼出来的每个片段都对应 OMML 规范里的一个元素。
+M_NS = 'xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"'
+
+
+def _x(s: str) -> str:
+    return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+
+def _tag(name: str, body: str = "") -> str:
+    return f"<m:{name}>{body}</m:{name}>"
+
+
+def mi(t: str) -> str:
+    """斜体变量（数学默认）。"""
+    return _tag("r", f'<m:t xml:space="preserve">{_x(t)}</m:t>')
+
+
+def mn(t: str) -> str:
+    """数字。"""
+    return _tag("r", f'<m:rPr><m:sty m:val="p"/></m:rPr><m:t>{_x(t)}</m:t>')
+
+
+def mtext(t: str) -> str:
+    """正体文字（函数名、缩写、where 等）。"""
+    return _tag("r", f'<m:rPr><m:sty m:val="p"/></m:rPr>'
+                  f'<m:t xml:space="preserve">{_x(t)}</m:t>')
+
+
+def mo(t: str) -> str:
+    """运算符 / 关系符。"""
+    return _tag("r", f'<m:t xml:space="preserve">{_x(t)}</m:t>')
+
+
+def msub(base: str, sub: str) -> str:
+    return f"<m:sSub><m:e>{base}</m:e><m:sub>{sub}</m:sub></m:sSub>"
+
+
+def msup(base: str, sup: str) -> str:
+    return f"<m:sSup><m:e>{base}</m:e><m:sup>{sup}</m:sup></m:sSup>"
+
+
+def msubsup(base: str, sub: str, sup: str) -> str:
+    return (f"<m:sSubSup><m:e>{base}</m:e><m:sub>{sub}</m:sub>"
+            f"<m:sup>{sup}</m:sup></m:sSubSup>")
+
+
+def mfrac(num: str, den: str) -> str:
+    """分式。默认 bar 型（横线分式）。"""
+    return (f'<m:f><m:fPr><m:type m:val="bar"/></m:fPr>'
+            f"<m:num>{num}</m:num><m:den>{den}</m:den></m:f>")
+
+
+def mdelim(body: str, beg: str = "(", end: str = ")") -> str:
+    """成对定界符（自动随内容增高）。"""
+    return (f"<m:d><m:dPr><m:begChr m:val=\"{_x(beg)}\"/>"
+            f"<m:endChr m:val=\"{_x(end)}\"/></m:dPr><m:e>{body}</m:e></m:d>")
+
+
+def mnary(chr_: str, sub: str, sup: str, body: str) -> str:
+    """n 元运算（求和、乘积）。limLoc=undOvr 让上下限落在符号正上下方。
+
+    上下限为空时必须置 *Hide=1：OMML 里仍会输出空的 <m:sub/>，Word 与
+    LibreOffice 都会把它画成一个小方框（豆腐块）。求和的上下限常为空
+    （Σ wᵢ 就是这种），所以这里按实际是否给限来决定隐藏。
+    """
+    return (f"<m:nary><m:naryPr><m:chr m:val=\"{_x(chr_)}\"/>"
+            f'<m:limLoc m:val="undOvr"/>'
+            f'<m:subHide m:val="{0 if sub else 1}"/>'
+            f'<m:supHide m:val="{0 if sup else 1}"/></m:naryPr>'
+            f"<m:sub>{sub}</m:sub><m:sup>{sup}</m:sup><m:e>{body}</m:e></m:nary>")
+
+
+def mfunc(name: str, body: str) -> str:
+    """函数应用：函数名正体，不带隐式参数括号。"""
+    return (f"<m:func><m:funcPr><m:ctrlPr/></m:funcPr>"
+            f"<m:fName>{name}</m:fName><m:e>{body}</m:e></m:func>")
+
+
+def mroot(body: str, idx: str = "") -> str:
+    """根式；idx 非空时开 n 次方。"""
+    deg = f'<m:deg>{idx}</m:deg>' if idx else '<m:deg/>'
+    return f"<m:rad><m:radPr><m:degHide m:val=\"{'0' if idx else '1'}\"/></m:radPr>{deg}<m:e>{body}</m:e></m:rad>"
+
+
+def mspace() -> str:
+    return "<m:r><m:t xml:space=\"preserve\"> </m:t></m:r>"
+
+
+def mmax(body: str) -> str:
+    """max{...}：下界截断。DerSimonian–Laird 的 τ² 与 I² 都要在 0 处截断，
+    写成花括号而不是 max( ) 是因为论文里这个截断本身就是一个结论。"""
+    return mdelim(body, "{", "}")
+
+
+def eq(omml_body: str, number: str, note: str | None = None) -> dict:
+    """一条编号公式。omml_body 是若干 mi/mo/mfrac/... 片段的拼接。"""
+    d = {"type": "equation",
+         "omml": f"<m:oMath {M_NS}>{omml_body}</m:oMath>",
+         "number": number}
+    if note:
+        d["note"] = note
+    return d
+
+
+def join(*parts: str) -> str:
+    return "".join(parts)
+
+
+# ───────────────── 签名定义表：直接从仓库数据文件生成 ─────────────────
+# 这两张表列的是**论文的研究对象本身**。原稿把它们全部写在正文里，
+# 15 个基因对逐个列出会占掉半页且必然抄错——而抄错基因对正是本文批评的对象。
+# 因此这里不手写：从 scripts/impres_pairs.py 取基因对，从 qc 的面板诊断结果
+# 取每个队列的覆盖率，读者可以逐格核对。
+def _load_impres_pairs_table() -> list[list[str]]:
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from impres_pairs import FEATURE_IDX, idx_to_pair  # noqa: E402
+
+    cov_path = ROOT / "qc" / "GSE215868_panel_diagnostic.tsv"
+    status: dict[tuple[str, int], str] = {}
+    with cov_path.open(encoding="utf-8") as fh:
+        for r in csv.DictReader(fh, delimiter="\t"):
+            status[(r["cohort"], int(r["pair_no"]))] = r["status"]
+
+    def cell(cohort: str, k: int) -> str:
+        return "yes" if status[(cohort, k)] == "可算" else "not on panel"
+
+    rows = []
+    for k, idx in enumerate(FEATURE_IDX, start=1):
+        g1, g2 = idx_to_pair(idx)
+        rows.append([str(k), g1, g2,
+                     cell("GSE91061", k), cell("GSE78220", k), cell("GSE215868", k)])
+    return rows
+
+
+
+# ─────────────────────── 引用插入与按出现顺序重编号 ───────────────────────
+# 12 条新增参考文献的措辞改动集中在这里，便于逐条复核。
+# 编号由脚本按**正文首次出现顺序**自动分配（MDPI 要求），因此新增引用只需
+# 插入措辞，不必手工维护编号，也不会出现「1→2、2→3」的级联错位。
+CITATION_INSERTS = [
+    ('Both are used less as clinical tests than as comparators against which new models must demonstrate added value.',
+     'Both are used less as clinical tests than as comparators against which new models must demonstrate added value. Several further signatures compete for the same role: the Tumour Immune Dysfunction and Exclusion model, which separates a tumour that is inaccessible to immune effectors from one whose effectors are dysfunctional [[N1]]; the interferon-γ-related gene-expression profile [[N2]]; and a B-cell-based classifier derived from melanoma cohorts directly [[N3]].'),
+    ('Retrospective replication can fail for reasons that have nothing to do with the signature, and a negative outcome becomes uninterpretable rather than informative.',
+     'Retrospective replication can fail for reasons that have nothing to do with the signature, and a negative outcome becomes uninterpretable rather than informative. The concern is not hypothetical: associations between biomarkers and outcome are systematically inflated in the published literature [[N6]], which is precisely why re-testing under criteria fixed in advance is the only remedy that can produce an interpretable negative.'),
+    ('We then test two signatures selected to fail in distinguishable ways, and we report the boundary of what the available data can support.',
+     'We then test two signatures selected to fail in distinguishable ways, and we report the boundary of what the available data can support. Fixing a protocol in advance is what converts a null result into evidence rather than an absence of evidence [[N11]].'),
+    ('Model selection was nested: 100 outer folds, feature selection performed strictly within each training fold, a hard cap of 10 features, and 20 repeats of the entire procedure.',
+     'Model selection was nested: 100 outer folds, feature selection performed strictly within each training fold, a hard cap of 10 features, and 20 repeats of the entire procedure. The nesting is what keeps the reported performance honest, since selecting features on the same data used to score them inflates apparent discrimination [[N7]].'),
+    ('Standard errors of the AUC follow Hanley and McNeil [10].',
+     'Standard errors of the AUC follow Hanley and McNeil [16], and the sample-size calculations follow the standard framework for accuracy studies [[N8]].'),
+    ('Discrimination was quantified as the area under the receiver operating characteristic curve with 95% confidence intervals from 4000 bootstrap resamples of the patient-level score.',
+     'Discrimination was quantified as the area under the receiver operating characteristic curve with 95% confidence intervals from 4000 bootstrap resamples of the patient-level score, following the standard framework for assessing prediction performance [[N5]].'),
+    ('In the single-cell component, 88,715 cells passed initial loading',
+     'Deconvolution used a reference-expression approach of the CIBERSORT type [[N12]]. In the single-cell component, 88,715 cells passed initial loading'),
+    ('The natural reading is that the erratic signature is the one whose definition is least securely known, while the consistent signature is better specified and may be capturing a small amount of real information.',
+     'The natural reading is that the erratic signature is the one whose definition is least securely known, while the consistent signature is better specified and may be capturing a small amount of real information. It is also consistent with what is known about what transcriptomic signatures in this field actually measure: the most widely used discriminators are dominated by a single axis of antigen presentation and interferon-γ response [4], with immune exclusion driven by an upstream WNT/β-catenin programme rather than by the effector compartment itself [[N4]]. A signature built on that upstream programme would be expected to order patients inconsistently across cohorts whose exclusion burden differs, which is the failure mode reported here.'),
+    ('And they should be powered explicitly against the published comparator rather than against a conventional per-group sample size:',
+     'They should also report their analyses to the standards already agreed for prediction models [[N9]] and tumour-marker studies [[N10]], so that a reader can tell a pre-specified comparison from one chosen after the fact. And they should be powered explicitly against the published comparator rather than against a conventional per-group sample size:'),
+]
+
+
+def apply_citation_edits(blocks: list[dict]) -> None:
+    """就地插入新引用措辞，并按首次出现顺序重排全部编号。
+
+    为什么重编号要自动做：MDPI 要求参考文献按正文首次出现顺序编号。
+    手工维护编号时，新增一条引用会把后面全部条目挤动，极易出错；
+    这里让脚本编号，规则只有一条——谁先出现谁在前。
+    """
+    for b in blocks:
+        if b["type"] != "paragraph":
+            continue
+        for old, new in CITATION_INSERTS:
+            if old in b["text"]:
+                b["text"] = b["text"].replace(old, new, 1)
+                break
+
+    order: list[str] = []
+    for b in blocks:
+        if b["type"] not in ("paragraph", "heading"):
+            continue
+        for m in re.finditer(r"\[\[N\d+\]\]|\[\d+\]", b["text"]):
+            if m.group(0) not in order:
+                order.append(m.group(0))
+    mapping = {tok: str(i + 1) for i, tok in enumerate(order)}
+
+    pat = re.compile(r"\[\[N\d+\]\]|\[\d+\]")
+    for b in blocks:
+        if b["type"] in ("paragraph", "heading"):
+            b["text"] = pat.sub(lambda m: f"[{mapping[m.group(0)]}]", b["text"])
 
 
 def build() -> dict:
@@ -164,7 +400,8 @@ def build() -> dict:
         "65 patients) is a nivolumab monotherapy cohort with both pre-treatment and "
         "on-treatment biopsies; the pre-treatment subset of 33 patients (10 partial or complete "
         "responders, 23 progressors) forms the development set. GSE78220 [4] (bulk RNA-seq; 28 "
-        "samples, 26 patients; 14 responders, 12 progressors) is an anti-PD-1 monotherapy "
+        "samples, 27 patients, of whom 26 are evaluable: 14 responders, 12 progressors) is an "
+        "anti-PD-1 monotherapy "
         "cohort of pre-treatment biopsies. GSE215868 [5] (NanoString IO 360 panel, 770 genes; 105 "
         "samples, 105 patients) is a pre-treatment cohort treated with PD-1 axis blockade; 79 "
         "patients had a classifiable response (45 responders, 34 progressors). Five further series "
@@ -183,6 +420,32 @@ def build() -> dict:
         "fields and platform were inspected and recorded before expression matrices were "
         "retrieved, and any cohort whose metadata could not support the required endpoint was "
         "excluded at that point rather than after partial analysis."))
+    B.append(table(
+        "[[T:sources]]. Data sources. Every series obtained for this study and the role it plays. "
+        "The first three carry the primary comparison; the remainder supply the auxiliary "
+        "analyses identified in Section 2.11 and Section 3.7. No series contributed to more than "
+        "one role, and no patient appears in two cohorts.",
+        ["Series", "Platform / measurement", "Samples", "Patients", "Role", "Primary comparison?"],
+        [
+            ["GSE91061", "RNA-seq, raw counts", "109", "65", "Development cohort (pre-treatment subset)", "Yes"],
+            ["GSE78220", "Bulk RNA-seq", "28", "27", "Independent external validation", "Yes"],
+            ["GSE215868", "NanoString IO 360, 770 genes", "105", "105", "Independent external validation, largest", "Yes"],
+            ["GSE244982", "Bulk RNA-seq, author-normalised", "41", "41", "Resistance-state characterisation; no response labels", "No"],
+            ["GSE294272", "featureCounts raw counts", "29", "26", "Deconvolution reference profile and its validation", "No"],
+            ["GSE294273", "Single-cell (10x)", "\u2014", "12", "Cell-state definition for the reference profile", "No"],
+            ["GSE308433", "Single-cell (10x)", "\u2014", "12", "Tumour-intrinsic state; CNV and dosage", "No"],
+            ["GSE308434", "Single-cell (10x), tumour nuclei", "42", "34", "Longitudinal description; no response labels", "No"],
+            ["GSE308435", "T-cell receptor libraries", "42", "34", "TCR clonality (Supplementary Material S1)", "No"],
+            ["GSE115821", "Bulk RNA-seq", "37", "1\u2026", "IMPRES derivation cohort; too few independent patients to analyse", "No"],
+        ],
+        widths=[1.15, 2.05, 0.85, 0.85, 2.85, 1.35], key="sources"))
+    B.append(p(
+        "The last row is included because its absence would be misleading. GSE115821 is the "
+        "cohort from which IMPRES was derived, and it is the one series in this study that was "
+        "named but never analysed. Its deposited metadata resolve to a single independent "
+        "patient with approximately two independent responders, which cannot support either "
+        "re-derivation or validation; Section 4.2 returns to what this prevents us from "
+        "concluding."))
 
     B.append(h(2, "2.3. Endpoint Definitions"))
     B.append(p(
@@ -205,18 +468,69 @@ def build() -> dict:
         "restores comparability with the RECIST endpoint on which IMPRES was reported. The "
         "consequence is that the present analysis is aligned with the published comparator, "
         "at the cost of discarding the original study's primary variable."))
+    B.append(table(
+        "[[T:cascade]]. Patient-level assembly of the three primary cohorts, from deposited "
+        "samples to the patients that enter each comparison. Every n reported in this paper is "
+        "one of these cells; none is derived by counting samples. Generated by a single script "
+        "from the patient-level inclusion and exclusion table deposited with this paper.",
+        ["Step", "GSE91061", "GSE78220", "GSE215868"],
+        [
+            ["Samples deposited (GEO)", "109", "28", "105"],
+            ["Independent patients after sample-level de-duplication", "65", "27", "105"],
+            ["Excluded: response not classifiable", "3 (RECIST NE)", "0", "1 (unknown)"],
+            ["Excluded: stable disease (two-level endpoint)", "19", "0", "25"],
+            ["Patients with a classifiable two-level response", "43", "27", "79"],
+            ["Further excluded: no pre-treatment biopsy available", "10", "1", "0"],
+            ["Evaluable patients entering the comparison", "33", "26", "79"],
+            ["Responders / non-responders", "10 / 23", "14 / 12", "45 / 34"],
+        ], widths=[3.4, 1.35, 1.35, 1.35], key="cascade"))
+    B.append(p(
+        "The two attrition routes are not interchangeable and are therefore shown separately. "
+        "An unclassifiable response is missing data and removes the patient from every "
+        "comparison; a stable disease is a real clinical state that the two-level endpoint "
+        "defined in this section does not count as a response, and that patient is retained for "
+        "the registered sensitivity analysis. The development set of 33 patients is a further "
+        "restriction of GSE91061 to pre-treatment biopsies, which is why that cohort contributes "
+        "33 rather than 43."))
 
     B.append(h(2, "2.4. Signature 1: IMPRES"))
     B.append(p(
         "IMPRES scores a sample by counting, across its 15 gene pairs, how many times the first "
         "gene of a pair is expressed above the second. The raw count ranges from 0 to 15; we "
-        "used the low-expression direction as pre-registered. The complete gene list in the "
-        "original publication's supplementary material could not be retrieved: the publisher "
-        "page returned an access error, and three further routes failed. The 15 pairs were "
-        "therefore reconstructed from the authors' public code repository. The reconstruction "
-        "has one internal validity check: every pair contains at least one gene that is a "
-        "direct target of checkpoint blockade. This check is weak, and the reconstruction "
-        "remains the largest single threat to the validity of the IMPRES arm."))
+        "used the low-expression direction as pre-registered. Written out, the score of sample x "
+        "on cohort c is"))
+    # (1) IMPRES 逐对计数打分：低表达方向（预登记口径）
+    _g1 = join(mtext("g"), mn("1"), mo("("), mi("k"), mo(")"))
+    _g2 = join(mtext("g"), mn("2"), mo("("), mi("k"), mo(")"))
+    B.append(eq(
+        join(
+            mtext("IMPRES"), mdelim(join(mi("x"), mo(","), mi("c"))), mo("="),
+            mnary("∑", join(mi("k"), mo("="), mn("1")), mn("15"),
+                  join(mn("1"), mdelim(
+                      join(msub(mi("x"), _g1), mo("<"), msub(mi("x"), _g2)), "[", "]"))),
+        ),
+        "1",
+        "x is the expression of gene g in sample x of cohort c; g1(k) and g2(k) are the two "
+        "genes of the k-th of the 15 reconstructed pairs; the bracket is the indicator function. "
+        "The score is an integer on 0\u201315. The mirrored convention tested alongside it uses "
+        "> in place of <."))
+    B.append(p(
+        "The complete gene list in the original publication's supplementary material could not "
+        "be retrieved: the publisher page returned an access error, and three further routes "
+        "failed. The 15 pairs were therefore reconstructed from the authors' public code "
+        "repository. The reconstruction has one internal validity check: every pair contains at "
+        "least one gene that is a direct target of checkpoint blockade. This check is weak, and "
+        "the reconstruction remains the largest single threat to the validity of the IMPRES "
+        "arm."))
+    B.append(table(
+        "[[T:impres]]. The 15 reconstructed IMPRES gene pairs and their coverage in each primary "
+        "cohort, in the pre-registered orientation of Equation (1). Read together with the "
+        "direction ambiguity described next, this table is the whole of the IMPRES "
+        "specification available to this study: the pairs are not the publication's, and the "
+        "orientation of each pair is not stated by the publication either.",
+        ["#", "Gene 1 (g1)", "Gene 2 (g2)", "GSE91061", "GSE78220", "GSE215868"],
+        _load_impres_pairs_table(),
+        widths=[0.5, 1.7, 1.7, 1.15, 1.15, 1.3], key="impres"))
     B.append(p(
         "The direction convention is itself unresolved, and this is a separate risk from the "
         "gene list. The two MATLAB files in the authors' repository that define the score "
@@ -237,6 +551,23 @@ def build() -> dict:
         "verified this empirically rather than assuming it, scoring every sample under four "
         "normalisations in two directions; all eight combinations produced identical per-sample "
         "scores. Normalisation choice therefore cannot explain any IMPRES result in this paper."))
+    # (2) 单调变换不变性：为什么归一化无法解释 IMPRES 的任何结果
+    B.append(eq(
+        join(
+            mn("1"), mdelim(join(mi("f"), mdelim(msub(mi("x"), _g1)), mo("<"),
+                              mi("f"), mdelim(msub(mi("x"), _g2))), "[", "]"),
+            mo("="),
+            mn("1"), mdelim(join(msub(mi("x"), _g1), mo("<"), msub(mi("x"), _g2)), "[", "]"),
+            mo(", "), mo("∀"), mtext(" strictly increasing "), mi("f"),
+            mtext("   ⟹   "),
+            mtext("IMPRES"), mdelim(join(mi("f"), mdelim(join(mi("x"), mo(","), mi("c"))))),
+            mo("="), mtext("IMPRES"), mdelim(join(mi("x"), mo(","), mi("c"))),
+        ),
+        "2",
+        "Each term is an indicator, so it depends only on the sign of the difference; a "
+        "strictly increasing map preserves that sign. Equation (2) is the reason normalisation "
+        "is excluded in [[T:attr]] by proof rather than by inspection \u2014 the empirical "
+        "four-normalisation check reported above tests the implementation against it."))
 
     B.append(h(2, "2.5. Signature 2: IPS-MHC+CP"))
     B.append(p(
@@ -251,11 +582,56 @@ def build() -> dict:
         "We therefore tested the two classes that could be reconstructed gene by gene from open "
         "literature, namely the MHC class (10 genes) and the checkpoint class (10 genes), and "
         "refer to the resulting score as IPS-MHC+CP. It is not the Immunophenoscore and is "
-        "never described as such. Scoring follows the original construction: each gene is "
-        "converted to a within-cohort z-score, class means are taken, and the two class scores "
-        "are summed. We used the continuous value rather than the original 0–10 integer mapping; "
-        "the discretisation was judged in advance to destroy ranking resolution at the sample "
-        "sizes studied here, and that judgement was recorded before the data were examined."))
+        "never described as such. Each gene is first converted to a z-score taken within the "
+        "cohort, so that the score does not inherit the between-cohort differences in "
+        "expression scale described in Section 2.2:"))
+    # (3) 队列内 z 分数
+    B.append(eq(
+        join(
+            msub(mi("z"), join(mi("g"), mo(","), mi("c"))), mo("="),
+            mfrac(
+                join(msub(mi("x"), join(mi("g"), mo(","), mi("c"))), mo("−"),
+                     msub(mi("μ"), join(mi("g"), mo(","), mi("c")))),
+                msub(mi("σ"), join(mi("g"), mo(","), mi("c")))),
+        ),
+        "3",
+        "μ and σ are the mean and standard deviation of gene g across the evaluable patients of "
+        "cohort c. Estimating them within cohort is what allows the same score to be compared "
+        "between a raw-count RNA-seq matrix and a NanoString panel without any cross-cohort "
+        "rescaling of patient-level data."))
+    # (4) IPS-MHC+CP = 两个类别均分相加
+    B.append(eq(
+        join(
+            mtext("IPS"), mo("−"), mtext("MHC"), mo("+"), mtext("CP"),
+            mdelim(join(mi("x"), mo(","), mi("c"))), mo("="),
+            mfrac(mn("1"), mn("10")),
+            mnary("∑", join(mi("g"), mo("∈"), mtext("MHC")), "",
+                  msub(mi("z"), join(mi("g"), mo(","), mi("c")))),
+            mo("+"),
+            mfrac(mn("1"), mn("10")),
+            mnary("∑", join(mi("g"), mo("∈"), mtext("CP")), "",
+                  msub(mi("z"), join(mi("g"), mo(","), mi("c")))),
+        ),
+        "4",
+        "MHC and CP denote the two reconstructed classes, 10 genes each, listed in [[T:ips]]. The "
+        "score is used in its continuous form; the original 0–10 integer mapping was judged in "
+        "advance to destroy ranking resolution at the sample sizes studied here."))
+    B.append(table(
+        "[[T:ips]]. The two classes of IPS-MHC+CP, given gene by gene. Unlike IMPRES, this gene "
+        "list is complete: every gene was obtained from open literature, and all 20 are present "
+        "on the NanoString panel used in the largest cohort, so no failure of this signature can "
+        "be attributed to missing measurement. It is nonetheless not the Immunophenoscore, which "
+        "has four classes and 26 feature sets.",
+        ["Class", "n", "Genes", "Coverage on GSE215868 panel"],
+        [
+            ["MHC", "10",
+             "B2M, HLA-A, HLA-B, HLA-C, HLA-E, HLA-F, HLA-DPA1, HLA-DPB1, TAP1, TAP2",
+             "10 / 10"],
+            ["Checkpoint", "10",
+             "CD27, CD274, CTLA4, HAVCR2, ICOS, IDO1, LAG3, PDCD1, PDCD1LG2, TIGIT",
+             "10 / 10"],
+            ["Total", "20", "\u2014", "20 / 20"],
+        ], widths=[1.15, 0.45, 4.15, 1.35], key="ips"))
     B.append(p(
         "This signature carries a property that makes its failure harder to excuse: all 20 genes "
         "are present on the NanoString IO 360 panel used in GSE215868, so it can be computed in "
@@ -287,7 +663,7 @@ def build() -> dict:
         "exclude each. Seven were registered: implementation error; normalisation; platform "
         "suitability; sample size; biopsy timepoint; treatment regimen; and endpoint "
         "definition. A negative result is reported as concerning the signatures only if all "
-        "seven have been addressed. The items are numbered in the order registered here, and Table 6 "
+        "seven have been addressed. The items are numbered in the order registered here, and [[T:attr]] "
         "and Figure 4 follow the same numbering. Sections 2.3, 2.4, 2.9, 3.6 and 3.7 present "
         "the corresponding artefacts."))
 
@@ -300,6 +676,20 @@ def build() -> dict:
         "McNeil [10]. Two thresholds were used: 0.70, taken as the lower bound of a usable "
         "discriminator, and 0.77, the lower bound of the cross-cohort AUC range reported for "
         "IMPRES in its original publication."))
+    # (5) 功效：单侧检验 H0: A = 0.50
+    _phi_arg = join(
+        mfrac(join(mi("A"), mo("−"), mn("0.50")),
+              mdelim(join(mtext("SE"), mdelim(mi("A"))))),
+        mo("−"),
+        msub(mi("z"), join(mn("1"), mo("−"), mi("α"))),
+    )
+    B.append(eq(
+        join(mtext("Power"), mdelim(mi("A")), mo("="), mi("Φ"), mdelim(_phi_arg)),
+        "5",
+        "A is the true AUC and SE(A) its standard error, given by Equation (11). Φ is the "
+        "standard normal cumulative distribution function and α the one-sided significance "
+        "level, set to 0.025 throughout. Equation (5) is the probability of rejecting chance "
+        "discrimination when the truth is A."))
     B.append(p(
         "Because a single cohort yields a wide interval, we additionally pooled the "
         "study-level estimates. This does not merge patients. The pre-registration forbids "
@@ -311,6 +701,78 @@ def build() -> dict:
         "with Cochran's Q and I². Directional consistency across cohorts was assessed with a "
         "sign test, in which a signature whose point estimates all fall below 0.50 is recorded "
         "as consistently reversed and not as consistent with the published direction."))
+    # (6) logit 尺度与权重
+    _se_ai = mdelim(join(mtext("SE"), mdelim(msub(mi("A"), mi("i")))))
+    _odds = mdelim(join(msub(mi("A"), mi("i")),
+                        mdelim(join(mn("1"), mo("−"), msub(mi("A"), mi("i"))))))
+    _se_logit = msup(mdelim(mfrac(_se_ai, _odds)), mn("2"))
+    B.append(eq(
+        join(
+            msub(mi("θ"), mi("i")), mo("="),
+            mi("ln"), mdelim(mfrac(msub(mi("A"), mi("i")),
+                                   mdelim(join(mn("1"), mo("−"), msub(mi("A"), mi("i")))))),
+            mtext(",     "),
+            msub(mi("v"), mi("i")), mo("="), _se_logit,
+            mtext(",     "),
+            msub(mi("w"), mi("i")), mo("="), mfrac(mn("1"), msub(mi("v"), mi("i"))),
+        ),
+        "6",
+        "i indexes cohorts, not patients. v is the delta-method variance of the logit AUC, "
+        "obtained from the standard error in Equation (11) by the chain rule for the logit "
+        "transform."))
+    # (7) 固定效应合并、Q 与 I²
+    _sum_wi = mnary("∑", "", "", msub(mi("w"), mi("i")))
+    _sum_wi_thi = mnary("∑", "", "", join(msub(mi("w"), mi("i")), msub(mi("θ"), mi("i"))))
+    _Q = join(
+        mtext("Q"), mo("="), _sum_wi,
+        msup(mdelim(join(msub(mi("θ"), mi("i")), mo("−"), msub(mi("θ"), mtext("FE")))), mn("2")),
+    )
+    _df = join(mo("k"), mo("−"), mn("1"))
+    B.append(eq(
+        join(
+            msub(mi("θ"), mtext("FE")), mo("="), mfrac(_sum_wi_thi, _sum_wi),
+            mtext("   ,   "),
+            _Q, mtext("   ,   "),
+            msup(mi("I"), mn("2")), mo("="), mtext("100 %"), mtext(" "), mo("·"),
+            mmax(mfrac(join(_Q, mo("−"), _df), _Q)),
+        ),
+        "7",
+        "Q is Cochran's statistic for heterogeneity across k cohorts with k − 1 degrees of "
+        "freedom, and I² is the share of between-cohort variability exceeding what chance alone "
+        "would produce. I² is floored at zero, so 0% denotes an absence of detected "
+        "heterogeneity and not evidence of homogeneity (Section 3.5)."))
+    # (8)(9) DerSimonian–Laird 随机效应合并
+    # 写成中间变量而非嵌套：τ² 的定义里含 C，C 又是一对求和之差，
+    # 直接内联会深到无法逐层核对，而本项目要求每个数字可追源，公式同理。
+    # 拆成两条是因为单行放不下五条关系——超出版心的公式在 Word 里会被裁掉。
+    _C = mdelim(join(
+        mtext("C"), mo("="),
+        _sum_wi, mo("−"),
+        mfrac(mnary("∑", "", "", msup(msub(mi("w"), mi("i")), mn("2"))), _sum_wi),
+    ))
+    _tau2 = join(msup(mi("τ"), mn("2")), mo("="), mmax(mfrac(join(_Q, mo("−"), _df), _C)))
+    _W = join(msub(mi("W"), mi("i")), mo("="),
+              mfrac(mn("1"), mdelim(join(msub(mi("v"), mi("i")), mo("+"), msup(mi("τ"), mn("2"))))))
+    B.append(eq(
+        join(_tau2, mtext("   ,   "), _C, mtext("   ,   "), _W),
+        "8",
+        "C is the conventional DerSimonian–Laird denominator. Because τ² is floored at zero, the "
+        "random-effects weights collapse onto the fixed-effect weights whenever no heterogeneity "
+        "is detected, which is why the fixed- and random-effects estimates coincide in the "
+        "I² = 0% rows of Table 8."))
+    _theta_re = join(msub(mi("θ"), mtext("RE")), mo("="),
+                     mfrac(mnary("∑", "", "", join(msub(mi("W"), mi("i")), msub(mi("θ"), mi("i")))),
+                           mnary("∑", "", "", msub(mi("W"), mi("i")))))
+    _a_re = join(msub(mi("A"), mtext("RE")), mo("="),
+                 mfrac(mn("1"),
+                       mdelim(join(mn("1"), mo("+"),
+                                   msup(mi("e"), join(mo("−"), msub(mi("θ"), mtext("RE"))))))))
+    B.append(eq(
+        join(_theta_re, mtext("   ,   "), _a_re),
+        "9",
+        "The pooled AUC reported in Table 8 is the back-transform of the pooled logit "
+        "estimate, and its interval is obtained by applying the same normal quantile on the "
+        "logit scale and transforming back, as in Equation (7)."))
     B.append(p(
         "Two interpretive rules were fixed before running this analysis. A pooled estimate does "
         "not override any single-cohort conclusion. And where a sign test or a pooled interval "
@@ -340,7 +802,64 @@ def build() -> dict:
     B.append(p(
         "Discrimination was quantified as the area under the receiver operating characteristic "
         "curve with 95% confidence intervals from 4000 bootstrap resamples of the patient-level "
-        "score. Comparisons of responders against non-responders used one-sided Mann–Whitney U "
+        "score. The AUC was computed in its Mann–Whitney form, so that tied patient-level "
+        "scores contribute half credit rather than being silently discarded:"))
+    # (9) AUC 的 Mann–Whitney 形式（含并列的一半记分）
+    _ind = lambda a, b, op: join(mn("1"), mdelim(join(msub(mi("s"), a), mo(op), msub(mi("s"), b)),
+                                           "[", "]"))
+    _auc_num = join(
+        mnary("∑", join(mi("i"), mo("="), mn("1")), msub(mi("n"), mtext("R")),
+              mdelim(join(_ind(mi("i"), join(mi("j")), ">"),
+                          mo("+"), mfrac(mn("1"), mn("2")), mo("·"),
+                          _ind(mi("i"), join(mi("j")), "=")), "(", ")")),
+        mnary("∑", join(mi("j"), mo("="), mn("1")), msub(mi("n"), mtext("N")),
+              mdelim(msub(mi("s"), join(mi("j"))), "")),
+    )
+    B.append(eq(
+        join(
+            mtext("AUC"), mo("="), mtext("P"), mdelim(join(msub(mi("s"), mtext("R")),
+                                                            mo(">"), msub(mi("s"), mtext("N")))),
+            mo("="),
+            mfrac(_auc_num,
+                  mdelim(join(msub(mi("n"), mtext("R")), msub(mi("n"), mtext("N"))))),
+        ),
+        "10",
+        "R and N index responders and non-responders. This is the probability that a randomly "
+        "chosen responder scores above a randomly chosen non-responder, counting a tie as half; "
+        "with no ties it reduces to the trapezoidal area under the curve. A score that is "
+        "constant within a cohort makes every term a tie and returns exactly 0.50, which is the "
+        "property relied on in Section 3.7 to exclude a non-degeneracy artefact."))
+    # (10) Hanley–McNeil 标准误
+    B.append(eq(
+        join(
+            mtext("SE"), mdelim(mi("A")), mo("="),
+            mroot(
+                mfrac(
+                    join(mi("A"), mdelim(join(mn("1"), mo("−"), mi("A"))),
+                         mo("+"),
+                         mdelim(join(msub(mi("n"), mtext("R")), mo("−"), mn("1"))),
+                         mdelim(join(msub(mi("Q"), mn("1")), mo("−"), msup(mi("A"), mn("2")))),
+                         mo("+"),
+                         mdelim(join(msub(mi("n"), mtext("N")), mo("−"), mn("1"))),
+                         mdelim(join(msub(mi("Q"), mn("2")), mo("−"), msup(mi("A"), mn("2"))))),
+                    mdelim(join(msub(mi("n"), mtext("R")), msub(mi("n"), mtext("N"))))),
+            ),
+            mtext(",      "),
+            msub(mi("Q"), mn("1")), mo("="),
+            mfrac(mi("A"), mdelim(join(mn("2"), mo("−"), mi("A")))),
+            mtext(",   "),
+            msub(mi("Q"), mn("2")), mo("="),
+            mfrac(join(mn("2"), msup(mi("A"), mn("2"))),
+                  mdelim(join(mn("1"), mo("+"), mi("A")))),
+        ),
+        "11",
+        "This is the standard error used in Equation (5) and in Equation (6). Confidence "
+        "intervals reported in the results are nevertheless bootstrap intervals, because the "
+        "interval around an AUC estimated from as few as ten responders is visibly "
+        "non-normal; Equation (10) is used for power and for weighting, not for the intervals "
+        "the reader compares against 0.50."))
+    B.append(p(
+        "Comparisons of responders against non-responders used one-sided Mann–Whitney U "
         "tests in both directions, as registered. A signature was judged to have reproduced its "
         "published performance only if the 95% interval excluded 0.50 in the pre-registered "
         "direction and the point estimate fell between 0.70 and 1.00. Both directions were "
@@ -356,7 +875,7 @@ def build() -> dict:
         "this paper is used to support a positive conclusion. Power was computed with the "
         "Hanley–McNeil standard error evaluated at the hypothesised true AUC, and, where "
         "sample size is discussed, by solving that expression for n; both are stated in the "
-        "script that produces Table 4."))
+        "script that produces [[T:power]]."))
 
     B.append(h(2, "2.11. Supplementary Material"))
     B.append(p(
@@ -374,6 +893,19 @@ def build() -> dict:
         "profiles. Because a substantial fraction of the data remained unassigned, the "
         "deconvolution performed here supports coarse trichotomous statements only, and no "
         "claim of fine-grained cell-type decomposition is made."))
+    # (11) 参考表达谱去卷积：线性混合模型
+    B.append(eq(
+        join(
+            msub(mi("x"), join(mi("g"), mo(","), mi("c"))), mo("≈"),
+            mnary("∑", mi("k"), "",
+                  join(msub(mi("f"), join(mi("c"), mo(","), mi("k"))),
+                       msub(mi("r"), join(mi("g"), mo(","), mi("k"))))),
+        ),
+        "12",
+        "r is the reference profile of cell type k and f the fraction of that type in bulk sample "
+        "c, estimated for non-negative f subject to the fractions summing to one. Because 6 of 41 "
+        "single-cell clusters could not be assigned with confidence, the fitted fractions are "
+        "reported only as a coarse trichotomy in Supplementary Material S1."))
 
     B.append(h(2, "2.12. Code and Data Availability"))
     B.append(p(
@@ -395,10 +927,10 @@ def build() -> dict:
     B.append(h(1, "3. Results"))
     B.append(h(2, "3.1. Cohort Assembly"))
     B.append(p(
-        "The three primary cohorts yielded 33, 26 and 79 evaluable patients (Table 1), "
+        "The three primary cohorts yielded 33, 26 and 79 evaluable patients ([[T:cohort]]), "
         "corresponding to 138 evaluable patients in total with 69 responders and 69 "
         "non-responders. Patient-level assembly is what makes these numbers: GSE91061 "
-        "contributes 109 biopsies from 65 patients and GSE78220 contributes 28 biopsies from 26 "
+        "contributes 109 biopsies from 65 patients and GSE78220 contributes 28 biopsies from 27 "
         "patients, so counting samples rather than patients would have overstated the evidence "
         "in both. Figure 1 summarises the cohort roles, the patient-level assembly and the "
         "duplication hazards that produced these numbers."))
@@ -411,12 +943,12 @@ def build() -> dict:
                     "the per-cohort estimates computed here is not.",
                     163.8))
     B.append(table(
-        "Table 1. Characteristics of the three primary cohorts.",
+        "[[T:cohort]]. Characteristics of the three primary cohorts.",
         ["", "GSE91061", "GSE78220", "GSE215868"],
         [
             ["Platform", "RNA-seq", "bulk RNA-seq", "NanoString IO 360 (770 genes)"],
             ["Samples (GEO)", "109", "28", "105"],
-            ["Patients", "65", "26", "105"],
+            ["Patients", "65", "27", "105"],
             ["Evaluable patients", "33", "26", "79"],
             ["Responders / non-responders", "10 / 23", "14 / 12", "45 / 34"],
             ["Biopsy timepoint used", "pre-treatment", "pre-treatment (26 of 27)", "pre-treatment (all)"],
@@ -424,7 +956,7 @@ def build() -> dict:
             ["Native endpoint", "RECIST", "RECIST", "24-month long-term benefit (PFS-derived)"],
             ["Endpoint used here", "RECIST", "RECIST", "RECIST (derived from best overall response)"],
             ["Relation to IMPRES derivation", "reported validation cohort", "none", "none"],
-        ]))
+        ], key="cohort"))
 
     B.append(h(2, "3.2. Pre-Registered Primary Analysis"))
     B.append(p(
@@ -468,6 +1000,47 @@ def build() -> dict:
         "been modelled on its own. We record this rather than correct it, and we handled it by "
         "re-running the pre-registered panel under the identical protocol: same 100 outer "
         "folds, same within-fold selection, same cap of 10 features, same seed."))
+    B.append(table(
+        "[[T:featset]]. The feature sets involved in the deviation of Section 3.3, against the "
+        "pre-registration. Note that the pre-registration named six primary states spanning "
+        "seven Hallmark gene sets, because the proliferation state was defined as E2F targets "
+        "together with G2M checkpoint; the implementation split these into two features. Both "
+        "feature sets are reported in full because the deviation is part of the result, not a "
+        "footnote to it.",
+        ["Feature (Hallmark gene set)", "Pre-registered", "Role as pre-registered",
+         "Status in the model run"],
+        [
+            ["Antigen presentation (ALLOGRAFT_REJECTION)", "yes", "primary panel", "used"],
+            ["Interferon-\u03b3 response (INTERFERON_GAMMA_RESPONSE)", "yes", "primary panel", "used"],
+            ["Proliferation (E2F_TARGETS)", "yes", "primary panel", "used"],
+            ["G2M checkpoint (G2M_CHECKPOINT)", "yes", "primary panel, as half of the proliferation state", "used"],
+            ["EMT / migration (EPITHELIAL_MESENCHYMAL_TRANSITION)", "yes", "primary panel", "used"],
+            ["Hypoxia (HYPOXIA)", "yes", "primary panel", "used"],
+            ["TNF\u03b1 / NF-\u03baB (TNFA_SIGNALING_VIA_NFKB)", "yes", "primary panel", "used"],
+            ["Interferon-\u03b1 (INTERFERON_ALPHA_RESPONSE)", "yes", "exploratory panel", "used"],
+            ["Inflammatory response (INFLAMMATORY_RESPONSE)", "yes", "exploratory panel", "removed"],
+            ["TGF-\u03b2 signalling (TGF_BETA_SIGNALING)", "yes", "exploratory panel", "used"],
+            ["IL-2 / STAT5 signalling (IL2_STAT5_SIGNALING)", "yes", "exploratory panel", "used"],
+            ["Glycolysis (GLYCOLYSIS)", "yes", "exploratory panel", "used"],
+            ["Oxidative phosphorylation (OXIDATIVE_PHOSPHORYLATION)", "yes", "exploratory panel", "used"],
+            ["mTORC1 signalling (MTORC1_SIGNALING)", "yes", "exploratory panel", "used"],
+            ["PI3K / AKT / mTOR (PI3K_AKT_MTOR_SIGNALING)", "yes", "exploratory panel", "removed"],
+            ["Apoptosis (APOPTOSIS)", "yes", "exploratory panel", "removed"],
+            ["Angiogenesis (ANGIOGENESIS)", "yes", "exploratory panel", "used"],
+            ["p53 pathway (P53_PATHWAY)", "yes", "exploratory panel", "removed"],
+            ["IL-6 / JAK / STAT3 (IL6_JAK_STAT3_SIGNALING)", "no", "\u2014", "added"],
+            ["WNT / \u03b2-catenin (WNT_BETA_CATENIN_SIGNALING)", "no", "\u2014", "added"],
+            ["KRAS signalling up (KRAS_SIGNALING_UP)", "no", "\u2014", "added"],
+            ["Totals", "18 gene sets", "6 states (7 sets) + 11 sets", "17 modelled: 14 used + 3 added"],
+        ], widths=[3.0, 1.15, 2.75, 1.6], key="featset"))
+    B.append(p(
+        "The three added features have mechanistic reasons for having been chosen — IL-6/JAK/STAT3 "
+        "is an inflammatory pathway that competes with interferon-\u03b3, and \u03b2-catenin and KRAS "
+        "activation are recognised immune-evasion mechanisms in melanoma — and a sound reason is "
+        "not a procedural one. All three were selected after the primary analysis was under way, "
+        "and one of them later became the sole support for a direction-reversal narrative that we "
+        "have accordingly demoted to an incidental observation. The pre-registration was not "
+        "edited to match what was done."))
     B.append(p(
         "The re-run produced a result weaker than the one obtained with the deviant feature "
         "set: pooled out-of-fold AUC 0.417, mean across repeats 0.408 ± 0.046, mean across "
@@ -481,22 +1054,22 @@ def build() -> dict:
         "reported headline value of 0.500 for the deviant model was a pooled out-of-fold AUC in "
         "which each of the 33 patients was counted once per repeat and therefore 20 times. "
         "Under the three registered conventions the same model gives 0.500, 0.516 ± 0.112 and "
-        "0.549 ± 0.257. All three are now reported together (Table 2), and Figure 2 shows them "
+        "0.549 ± 0.257. All three are now reported together ([[T:nencv]]), and Figure 2 shows them "
         "side by side for both feature sets."))
-    B.append(figure("figures/Figure4_NestedCV.png",
+    B.append(figure("figures/Figure2_NestedCV.png",
                     "Figure 2. Nested cross-validation performance under the three registered "
                     "AUC conventions, for the pre-registered six-feature Hallmark panel and for the "
                     "deviant seventeen-feature set actually used, over 20 repeats.",
                     162.7))
     B.append(table(
-        "Table 2. Nested cross-validation AUC under the three registered conventions "
+        "[[T:nencv]]. Nested cross-validation AUC under the three registered conventions "
         "(development set, 33 patients, 10 responders, 20 repeats).",
         ["Convention", "Pre-registered panel (6 features)", "Set actually used (17 features)"],
         [
             ["Pooled out-of-fold AUC", "0.417", "0.500"],
             ["Mean across repeats ± SD", "0.408 ± 0.046", "0.516 ± 0.112"],
             ["Mean across outer folds ± SD", "0.347 ± 0.213", "0.549 ± 0.257"],
-        ]))
+        ], key="nencv"))
 
     B.append(h(2, "3.4. Signature 1 Across Cohorts: Directional Erraticism"))
     B.append(p(
@@ -548,16 +1121,16 @@ def build() -> dict:
         "below the registered replication threshold of 0.70, at the observed point estimate of "
         "0.591, would take approximately 53 patients per group. To establish instead that a "
         "discrimination of 0.591 is genuinely above chance requires far more: on the same "
-        "convention used for Table 4, the power of the present 45-and-34 comparison at a true AUC "
+        "convention used for [[T:power]], the power of the present 45-and-34 comparison at a true AUC "
         "of 0.591 is 0.29, and reaching 0.80 would need on the order of 150 patients per group "
         "(Section 3.6). Neither is the sample size available here. "
         "The I² of zero should not be read as evidence that the cohorts are "
         "interchangeable; the more parsimonious reading, given how different the cohorts are, "
         "is that the underlying signal is weak enough that population differences are swamped "
-        "by it. Table 3 collects every cross-cohort estimate in one place and Figure 3 "
+        "by it. [[T:cross]] collects every cross-cohort estimate in one place and Figure 3 "
         "shows them with their intervals."))
 
-    B.append(figure("figures/Figure2_SignaturePerformance.png",
+    B.append(figure("figures/Figure3_SignaturePerformance.png",
                     "Figure 3. Discrimination of both signatures across the three validation "
                     "cohorts, in the pre-registered direction, with 95% bootstrap confidence "
                     "intervals. (a) and (b) show each cohort in the pre-registered direction, "
@@ -573,7 +1146,7 @@ def build() -> dict:
                     "fail differently, which is the substantive result.",
                     153.2))
     B.append(table(
-        "Table 3. Cross-cohort results for both signatures. Single-cohort AUCs with bootstrap "
+        "[[T:cross]]. Cross-cohort results for both signatures. Single-cohort AUCs with bootstrap "
         "95% intervals, and random-effects pooled estimates over the 138 patients contributing "
         "study-level estimates; no patient-level record was pooled. Pooled columns are post hoc "
         "(Section 2.8); the single-cohort columns are the pre-registered analyses.",
@@ -587,11 +1160,11 @@ def build() -> dict:
              "0.591 (0.463–0.714)", "0.592 (0.492–0.685)", "0.0%", "0.071", "0.25"],
             ["IPS-MHC+CP, mirrored", "0.396 (0.178–0.626)", "0.417 (0.190–0.661)",
              "0.409 (0.288–0.541)", "not pooled", "\u2014", "\u2014", "0.25"],
-        ], widths=[2.5, 1.35, 1.35, 1.35, 1.5, 0.8, 0.9, 0.95]))
+        ], widths=[2.5, 1.35, 1.35, 1.35, 1.5, 0.8, 0.9, 0.95], key="cross"))
 
     B.append(h(2, "3.6. What These Cohorts Can and Cannot Resolve"))
     B.append(p(
-        "The sample size objection deserves a direct answer rather than a concession, and Table 4 "
+        "The sample size objection deserves a direct answer rather than a concession, and [[T:power]] "
         "gives the powers directly. In the "
         "primary comparison, with 45 responders and 34 non-responders and a one-sided alpha of "
         "0.025, the probability of detecting a true AUC of 0.70 is 0.929, and of detecting a "
@@ -607,11 +1180,11 @@ def build() -> dict:
         "well powered against the published performance and poorly powered against a weak one, "
         "which is exactly the boundary within which the IPS-MHC+CP result must be read."))
     B.append(table(
-        "Table 4. Power of the primary comparison (45 responders, 34 non-responders) to detect "
+        "[[T:power]]. Power of the primary comparison (45 responders, 34 non-responders) to detect "
         "a true AUC, one-sided alpha = 0.025. Post hoc (Section 2.8); reported to bound what the "
         "negative result can and cannot exclude, not to qualify the pre-registered comparison.",
         ["True AUC", "0.60", "0.65", "0.70", "0.77"],
-        [["Power", "0.347", "0.685", "0.929", "0.999"]]))
+        [["Power", "0.347", "0.685", "0.929", "0.999"]], key="power"))
 
     B.append(h(2, "3.7. Cohort Heterogeneity and the Limits of Attribution"))
     B.append(p(
@@ -625,7 +1198,7 @@ def build() -> dict:
     B.append(p(
         "Biopsy timepoint did not explain the result. Stratifying GSE91061 by visit, the "
         "pre-treatment stratum reproduced the development-set point estimate exactly (AUC 0.359 in "
-        "both; the re-run interval is 0.180–0.557 against 0.172–0.552 in Table 3, the difference "
+        "both; the re-run interval is 0.180–0.557 against 0.172–0.552 in [[T:cross]], the difference "
         "being a separate bootstrap resampling), with 10 responders and 23 non-responders, which "
         "also serves as an independent "
         "check that the scoring implementation is stable. The on-treatment stratum did not "
@@ -642,7 +1215,7 @@ def build() -> dict:
         "corresponding IPS-MHC+CP estimates in full for transparency: 0.524 (0.326–0.726), 0.710 "
         "(0.450–0.920) with 10 responders and 10 non-responders, and 0.570 (0.320–0.805) "
         "respectively. The nivolumab value for IPS-MHC+CP is the highest number in this study "
-        "for that signature, and it is the reason the full stratified results are given in Table 5 "
+        "for that signature, and it is the reason the full stratified results are given in [[T:strat]] "
         "rather than only the favourable strata: a table reporting only the good ones would be "
         "selection rather than audit. "
         "With 20 patients and an interval spanning 0.45 to 0.92 it carries no inferential weight, "
@@ -655,7 +1228,7 @@ def build() -> dict:
         "IPS-MHC+CP has a standard deviation of 1.10 to 1.38 with no repeated values. Both "
         "signatures vary substantially between patients in every cohort."))
     B.append(table(
-        "Table 5. Stratified results underlying Section 3.7, reported in full including strata "
+        "[[T:strat]]. Stratified results underlying Section 3.7, reported in full including strata "
         "that do not favour the conclusion. n is responders / non-responders. Post hoc "
         "(Section 2.9); no inferential claim is made from any stratum.",
         ["Stratum", "Signature", "n", "AUC (95% bootstrap CI)"],
@@ -670,14 +1243,14 @@ def build() -> dict:
             ["Regimen: nivolumab", "IPS-MHC+CP", "10 / 10", "0.710 (0.450–0.920)"],
             ["Regimen: pembrolizumab", "IPS-MHC+CP", "16 / 8", "0.570 (0.320–0.805)"],
             ["Regimen: nivolumab + experimental\u2026", "both", "1 / 0", "not estimable (a single responder)"],
-        ], widths=[2.6, 1.5, 1.1, 2.3]))
+        ], widths=[2.6, 1.5, 1.1, 2.3], key="strat"))
     B.append(p(
         "* The pooled-visit row is a sample-level quantity resting on 69 biopsies from 65 patients "
         "and is shown for completeness only. The fourth regimen stratum contained one patient and "
         "is listed so that the table is complete; no AUC can be formed from it. Figure 4 shows "
-        "the artefact used to address each registered explanation, and Table 6 records the "
+        "the artefact used to address each registered explanation, and [[T:attr]] records the "
         "verdict, including the two that the available data cannot exclude."))
-    B.append(figure("figures/Figure3_RuledOutExplanations.png",
+    B.append(figure("figures/Figure4_RuledOutExplanations.png",
                     "Figure 4. The seven technical explanations registered in advance and the artefact used "
                     "to address each, with the two explanations that the available data cannot "
                     "exclude. (a) implementation and normalisation invariance, shown as per-sample "
@@ -694,7 +1267,7 @@ def build() -> dict:
                     "documented in the band.",
                     171.2))
     B.append(table(
-        "Table 6. Attribution boundary. Alternative explanations for the negative result, "
+        "[[T:attr]]. Attribution boundary. Alternative explanations for the negative result, "
         "whether the present data can exclude them, and the artefact that does so.",
         ["Alternative explanation", "Excludable here?", "Basis"],
         [
@@ -707,7 +1280,7 @@ def build() -> dict:
             ["Endpoint definition", "Partly", "GSE215868 pulled back to a RECIST definition for comparability. Residual risk: the RECIST labels were parsed by this project and cannot be fully reconciled with formal RECIST assessment"],
             ["Population composition", "No", "No matching variables (subtype, mutation, metastatic burden) available for adjustment"],
             ["Weakness intrinsic to the derivation cohorts", "No", "IMPRES derivation cohort holds 8 independent patients; never analysable here"],
-        ]))
+        ], key="attr"))
 
     # ─────────────────────────── 4. 讨论 ───────────────────────────
     B.append(h(1, "4. Discussion"))
@@ -890,65 +1463,114 @@ def build() -> dict:
 
     B.append(h(1, "References"))
     for ref in [
-        # 全部 10 条的作者名单、刊名、卷页均已逐条核对（2026-10-07）。
-        # 更正记录见 docs/12_参考文献核对.md：原第 2、3、5、6 条的题名或出处与 PubMed / Crossref
-        # 记录不符（原第 1、4、10 条的作者名单有虚构填充），第 7、9 条未能机器核验、暂按通行引用保留。
-        "1. Auslander N.; Zhang G.; Lee J.S.; Frederick D.T.; Miao B.; Moll T.; Tian T.; "
-        "Wei Z.; Madan S.; Sullivan R.J.; Boland G.; Flaherty K.; Herlyn M.; Ruppin E. "
-        "Robust prediction of response to immune checkpoint blockade therapy in metastatic "
-        "melanoma. Nat. Med. 2018, 24, 1545–1549. (The IMPRES signature; note the "
-        "publisher's correction of December 2018.)",
+        # 25 条。原有 13 条的作者、刊名、卷页已于 2026-10-07 逐条回库核对，
+        # 记录见 docs/12_参考文献核对.md；新增 12 条由 refs/verify_refs.py 回 PubMed
+        # efetch XML 逐条取字段，并以 Europe PMC 交叉核对 DOI（见 docs/13）。
+        # 编号由 apply_citation_edits() 按正文首次出现顺序自动分配，此处顺序即定稿顺序。
+        "1. Auslander N.; Zhang G.; Lee J.S.; Frederick D.T.; Miao B.; Moll T.; Tian T.; Wei "
+        "Z.; Madan S.; Sullivan R.J.; Boland G.; Flaherty K.; Herlyn M.; Ruppin E. Robust "
+        "prediction of response to immune checkpoint blockade therapy in metastatic melanoma. "
+        "Nat. Med. 2018, 24, 1545–1549. (The IMPRES signature; note the publisher's "
+        "correction of December 2018.)",
         "2. Charoentong P.; Finotello F.; Angelova M.; Mayer C.; Efremova M.; Rieder D.; "
         "Hackl H.; Trajanoski Z. Pan-cancer immunogenomic analyses reveal "
         "genotype–immunophenotype relationships and predictors of response to checkpoint "
         "blockade. Cell Rep. 2017, 18, 248–262. (The Immunophenoscore.)",
-        "3. Riaz N.; Havel J.J.; Makarov V.; Desrichard A.; Urba W.J.; Sims J.S.; Hodi F.S.; "
+        "3. Jiang P.; Gu S.; Pan D.; Fu J.; Sahu A.; Hu X.; Li Z.; Traugh N.; Bu X.; Li B.; "
+        "Liu J.; Freeman GJ; Brown MA; Wucherpfennig KW; Liu XS Signatures of T cell "
+        "dysfunction and exclusion predict cancer immunotherapy response. Nat. Med 2018, 24, "
+        "1550–1558. (Tumour Immune Dysfunction and Exclusion model.)",
+        "4. Ayers M.; Lunceford J.; Nebozhyn M.; Murphy E.; Loboda A.; Kaufman DR; Albright "
+        "A.; Cheng JD; Kang SP; Shankaran V.; Piha-Paul SA; Yearley J.; Seiwert TY; Ribas A.; "
+        "McClanahan TK IFN-γ-related mRNA profile predicts clinical response to PD-1 "
+        "blockade. J Clin. Invest 2017, 127, 2930–2940. (The IFN-γ-related 28-gene profile.)",
+        "5. Griss J.; Bauer W.; Wagner C.; Simon M.; Chen M.; Grabmeier-Pfistershammer K.; "
+        "Maurer-Granofszky M.; Roka F.; Penz T.; Bock C.; Zhang G.; Herlyn M.; Glatz K.; "
+        "Läubli H.; Mertz KD; Petzelbauer P.; Wiesner T.; Hartl M.; Pickl WF; Somasundaram "
+        "R.; Steinberger P.; Wagner SN B cells sustain inflammation and predict response to "
+        "immune checkpoint blockade in human melanoma. Nat. Commun 2019, 10, 4186. (An "
+        "independent signature derived from melanoma directly.)",
+        "6. Ioannidis JP Why most discovered true associations are inflated. Epidemiology "
+        "2008, 19, 640–648. (Basis for treating a negative re-test as informative rather than "
+        "anomalous.)",
+        "7. Nosek BA; Ebersole CR; DeHaven AC; Mellor DT The preregistration revolution. "
+        "Proc. Natl. Acad. Sci. U S A 2018, 115, 2600–2606. (Rationale for fixing the "
+        "protocol before computation.)",
+        "8. Riaz N.; Havel J.J.; Makarov V.; Desrichard A.; Urba W.J.; Sims J.S.; Hodi F.S.; "
         "Martín-Algarra S.; Mandal R.; Sharfman W.H.; Bhatia S.; Hwu W.J.; Gajewski T.F.; "
         "Slingluff C.L.; Chowell D.; Kendall S.M.; Chang H.; Shah R.; Kuo F.; Morris L.G.T.; "
         "Sidhom J.W.; Schneck J.P.; Horak C.E.; Weinhold N.; Chan T.A. Tumor and "
         "microenvironment evolution during immunotherapy with nivolumab. Cell 2017, 171, "
         "934–949.e16. (Source of GSE91061.)",
-        "4. Hugo W.; Zaretsky J.M.; Sun L.; Song C.; Moreno B.H.; Hu-Lieskovan S.; "
+        "9. Hugo W.; Zaretsky J.M.; Sun L.; Song C.; Moreno B.H.; Hu-Lieskovan S.; "
         "Berent-Maoz B.; Pang J.; Chmielowski B.; Cherry G.; Seja E.; Lomeli S.; Kong X.; "
         "Kelley M.C.; Sosman J.A.; Johnson D.B.; Ribas A.; Lo R.S. Genomic and transcriptomic "
         "features of response to anti-PD-1 therapy in metastatic melanoma. Cell 2016, 165, "
         "35–44. (Source of GSE78220.)",
-        "5. Vathiotis I.A.; Salichos L.; Martinez-Morilla S.; Gavrielatou N.; Aung T.N.; "
+        "10. Vathiotis I.A.; Salichos L.; Martinez-Morilla S.; Gavrielatou N.; Aung T.N.; "
         "Shafi S.; Wong P.F.; Jessel S.; Kluger H.M.; Syrigos K.N.; Warren S.; Gerstein M.; "
         "Rimm D.L. Baseline gene expression profiling determines long-term benefit to "
         "programmed cell death protein 1 axis blockade. NPJ Precis. Oncol. 2022, 6, 92. "
         "(Source of GSE215868; native endpoint is 24-month long-term benefit.)",
-        "6. Lauss M.; Phung B.; Borch T.H.; Harbst K.; Kaminska K.; Ebbesson A.; Hedenfalk I.; "
-        "Yuan J.; Nielsen K.; Ingvar C.; Carneiro A.; Isaksson K.; Pietras K.; Svane I.M.; "
-        "Donia M.; Jönsson G. Molecular patterns of resistance to immune checkpoint blockade in "
-        "melanoma. Nat. Commun. 2024, 15, 3075. (Source of GSE244982.)",
-        "7. Di Pietro A.; Au L.; Crock P.; Thio N.; Pizzolla A.; Nguyen T.N.; Macdonald S.; "
-        "Chalmers H.; Zhu R.; Airaghi A.; Molden-Hauer T.; Bacac M.; Schwalie P.; Schlenker R.; "
-        "Levesque M.P.; Mailer S.; Barnes-Cullen K.; Winch K.; Chan J.; Yeung G.A.; Spain L.; "
-        "Rao A.D.; Sandhu S.; Gyorki D.E.; McArthur G.A.; Mackay L.K.; Neeson P.J. "
+        "11. Lauss M.; Phung B.; Borch T.H.; Harbst K.; Kaminska K.; Ebbesson A.; Hedenfalk "
+        "I.; Yuan J.; Nielsen K.; Ingvar C.; Carneiro A.; Isaksson K.; Pietras K.; Svane "
+        "I.M.; Donia M.; Jönsson G. Molecular patterns of resistance to immune checkpoint "
+        "blockade in melanoma. Nat. Commun. 2024, 15, 3075. (Source of GSE244982.)",
+        "12. Di Pietro A.; Au L.; Crock P.; Thio N.; Pizzolla A.; Nguyen T.N.; Macdonald S.; "
+        "Chalmers H.; Zhu R.; Airaghi A.; Molden-Hauer T.; Bacac M.; Schwalie P.; Schlenker "
+        "R.; Levesque M.P.; Mailer S.; Barnes-Cullen K.; Winch K.; Chan J.; Yeung G.A.; Spain "
+        "L.; Rao A.D.; Sandhu S.; Gyorki D.E.; McArthur G.A.; Mackay L.K.; Neeson P.J. "
         "Tumor-resident T cells and dendritic cells form an in situ archetype during "
-        "immunotherapy response in melanoma. Nat. Commun. 2026, 17, 7445. (Source of GSE294272 "
-        "and GSE294273.)",
-        "8. Tumor-intrinsic and extrinsic immune mechanisms define resistance to immune "
+        "immunotherapy response in melanoma. Nat. Commun. 2026, 17, 7445. (Source of "
+        "GSE294272 and GSE294273.)",
+        "13. Tumor-intrinsic and extrinsic immune mechanisms define resistance to immune "
         "checkpoint blockade in metastatic melanoma. GEO Series GSE308433, GSE308434 and "
-        "GSE308435 [Internet]. Columbia University, Izar laboratory; cited by accession because "
-        "no peer-reviewed publication is linked to these accessions in GEO. Available at: "
-        "https://www.ncbi.nlm.nih.gov/geo/ (accessed 7 October 2026). (Source of the single-cell "
-        "and T-cell receptor analyses in Supplementary Material S1.)",
-        "9. Liberzon A.; Birger C.; Thorvaldsdóttir H.; Ghandi M.; Mesirov J.P.; Tamayo P. The "
-        "Molecular Signatures Database (MSigDB) hallmark gene set collection. Cell Syst. 2015, "
-        "1, 417–425. (Source of the feature annotations used in model development.)",
-        "10. Hanley J.A.; McNeil B.J. The meaning and use of the area under a receiver "
+        "GSE308435 [Internet]. Columbia University, Izar laboratory; cited by accession "
+        "because no peer-reviewed publication is linked to these accessions in GEO. Available "
+        "at: https://www.ncbi.nlm.nih.gov/geo/ (accessed 7 October 2026). (Source of the "
+        "single-cell and T-cell receptor analyses in Supplementary Material S1.)",
+        "14. Liberzon A.; Birger C.; Thorvaldsdóttir H.; Ghandi M.; Mesirov J.P.; Tamayo P. "
+        "The Molecular Signatures Database (MSigDB) hallmark gene set collection. Cell Syst. "
+        "2015, 1, 417–425. (Source of the feature annotations used in model development.)",
+        "15. Varma S.; Simon R. Bias in error estimation when using cross-validation for "
+        "model selection. BMC Bioinformatics 2006, 7, 91. (Why the nested-CV conventions in "
+        "Section 2.6 are all reported.)",
+        "16. Hanley J.A.; McNeil B.J. The meaning and use of the area under a receiver "
         "operating characteristic (ROC) curve. Radiology 1982, 143, 29–36. (Standard error of "
         "the AUC, and the basis of the power calculation in Section 2.8.)",
-        "11. DerSimonian R.; Laird N. Meta-analysis in clinical trials. Control. Clin. Trials. "
-        "1986, 7, 177–188. (Method for the study-level pooling in Section 2.8.)",
-        "12. Deeks J.J.; Keating J.; Leeflang M.M.G. A hierarchy of diagnostic tests. Ann. "
+        "17. Buderer NM Statistical methodology: I. Incorporating the prevalence of disease "
+        "into the sample size calculation for sensitivity and specificity. Acad. Emerg. Med "
+        "1996, 3, 895–900. (Sample-size framework underlying [[T:power]].)",
+        "18. DerSimonian R.; Laird N. Meta-analysis in clinical trials. Control. Clin. "
+        "Trials. 1986, 7, 177–188. (Method for the study-level pooling in Section 2.8.)",
+        "19. Steyerberg EW; Vickers AJ; Cook NR; Gerds T.; Gonen M.; Obuchowski N.; Pencina "
+        "MJ; Kattan MW Assessing the performance of prediction models: a framework for "
+        "traditional and novel measures. Epidemiology 2010, 21, 128–138. (Framework for "
+        "comparing AUC estimates across conventions.)",
+        "20. Deeks J.J.; Keating J.; Leeflang M.M.G. A hierarchy of diagnostic tests. Ann. "
         "Intern. Med. 2008, 148, 175–176.",
-        "13. Hanley J.A.; Lippman-Hand A. If a coin is tossed 3 times, is it fair? JAMA. 1983, "
-        "250, 2563–2566.",
+        "21. Newman AM; Liu CL; Green MR; Gentles AJ; Feng W.; Xu Y.; Hoang CD; Diehn M.; "
+        "Alizadeh AA Robust enumeration of cell subsets from tissue expression profiles. Nat. "
+        "Methods 2015, 12, 453–457. (CIBERSORT; the reference-profile method used in "
+        "Supplementary Material S1.)",
+        "22. Luke JJ; Bao R.; Sweis RF; Spranger S.; Gajewski TF WNT/β-catenin Pathway "
+        "Activation Correlates with Immune Exclusion across Human Cancers. Clin. Cancer. Res "
+        "2019, 25, 3074–3083. (Mechanistic basis of the TIDE exclusion arm; cited in Section "
+        "4.3.)",
+        "23. Hanley J.A.; Lippman-Hand A. If a coin is tossed 3 times, is it fair? JAMA. "
+        "1983, 250, 2563–2566.",
+        "24. Collins GS; Reitsma JB; Altman DG; Moons KG Transparent reporting of a "
+        "multivariable prediction model for individual prognosis or diagnosis (TRIPOD): the "
+        "TRIPOD statement. BMJ 2015, 350, g7594. (TRIPOD; cited in Section 4.6.)",
+        "25. McShane LM; Altman DG; Sauerbrei W.; Taube SE; Gion M.; Clark GM; Statistics "
+        "Subcommittee of the NCI-EORTC Working Group on Cancer Diagnostics Reporting "
+        "recommendations for tumor marker prognostic studies (REMARK). J Natl. Cancer. Inst "
+        "2005, 97, 1180–1184. (REMARK; cited in Section 4.6.)",
     ]:
         B.append(p(ref))
+
+    apply_citation_edits(B)
+    resolve_table_refs(B)
 
     return {
         "meta": {

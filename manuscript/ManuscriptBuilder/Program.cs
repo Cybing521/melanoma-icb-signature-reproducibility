@@ -15,10 +15,12 @@
 //
 // 用法：dotnet run --project manuscript/ManuscriptBuilder -- <content.json> <out.docx> <baseDir>
 
+using System.Text;
 using System.Text.Json;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using M = DocumentFormat.OpenXml.Math;
 
 namespace ManuscriptBuilder;
 
@@ -65,6 +67,7 @@ internal static class Program
                 case "paragraph": AddParagraph(body, blk); break;
                 case "bullet": AddBullet(body, blk); break;
                 case "table": AddTable(body, blk, baseDir); break;
+                case "equation": AddEquation(body, blk); break;
                 case "figure": AddFigure(body, blk, baseDir); break;
                 case "pagebreak": body.AppendChild(new Paragraph(new Run(new Break { Type = BreakValues.Page }))); break;
                 default: Console.Error.WriteLine($"warn: unknown block type {blk.GetProperty("type")}"); break;
@@ -230,6 +233,49 @@ internal static class Program
                     new Indentation { Left = "425", Hanging = "283" },
                     new SpacingBetweenLines { After = "0", Line = LineTwips.ToString(), LineRule = LineSpacingRuleValues.Auto }),
                 new Run(new Text("• " + (item.GetString() ?? "")))));
+        }
+    }
+
+    // ── 公式 ──────────────────────────────────────────────────────
+    // 公式内容由 Python 侧的 OMML 片段生成（build_manuscript.py 的 eq()），
+    // 这里只负责排版：居中制表位 + 右对齐编号，以及可选的符号说明行。
+    //
+    // 为什么不在 C# 里拼公式：公式的数学内容与正文一样属于「稿件内容」，
+    // 留在生成正文的同一个脚本里，改公式才会和改正文一样在 git 里留痕。
+    private static void AddEquation(Body body, JsonElement blk)
+    {
+        // 正文宽度 9026 DXA（与表格一致）：中制表位取半宽，编号右对齐到右边界。
+        const int textW = 9026;
+        var p = new Paragraph(new ParagraphProperties(
+            new ParagraphStyleId { Val = "Normal" },
+            new Tabs(
+                new TabStop { Val = TabStopValues.Center, Position = textW / 2 },
+                new TabStop { Val = TabStopValues.Right, Position = textW }),
+            new SpacingBetweenLines { Before = "120", After = "60", Line = "240", LineRule = LineSpacingRuleValues.Auto }));
+
+        p.Append(new Run(new TabChar()));
+
+        var omml = blk.GetProperty("omml").GetString() ?? "";
+        // OfficeMath 由外层 XML 构造：m:oMath 是行内公式容器，可直接挂在段落里。
+        p.Append(new M.OfficeMath(omml));
+
+        if (blk.TryGetProperty("number", out var num) && num.GetString() is { Length: > 0 } n)
+        {
+            p.Append(new Run(new TabChar()));
+            p.Append(new Run(new RunProperties(new Bold()), new Text("(" + n + ")")));
+        }
+        body.AppendChild(p);
+
+        // 符号说明行（可选）：紧跟公式，缩进悬挂，10 pt
+        if (blk.TryGetProperty("note", out var note) && note.GetString() is { Length: > 0 } nt)
+        {
+            body.AppendChild(new Paragraph(
+                new ParagraphProperties(
+                    new ParagraphStyleId { Val = "Normal" },
+                    new Indentation { Left = "567" },
+                    new SpacingBetweenLines { Before = "0", After = "120", Line = "240", LineRule = LineSpacingRuleValues.Auto }),
+                new Run(new RunProperties(new FontSize { Val = "20" }),
+                        new Text(nt) { Space = SpaceProcessingModeValues.Preserve })));
         }
     }
 

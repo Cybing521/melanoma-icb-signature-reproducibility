@@ -1,0 +1,227 @@
+{
+ "30127393": {
+  "authors": [
+   "Jiang P",
+   "Gu S",
+   "Pan D",
+   "Fu J",
+   "Sahu A",
+   "Hu X",
+   "Li Z",
+   "Traugh N",
+   "Bu X",
+   "Li B",
+   "Liu J",
+   "Freeman GJ",
+   "Brown MA",
+   "Wucherpfennig KW",
+   "Liu XS"
+  ],
+  "n_authors": 15,
+  "title": "Signatures of T cell dysfunction and exclusion predict cancer immunotherapy response.",
+  "journal": "Nat Med",
+  "year": "2018",
+  "volume": "24",
+  "issue": "",
+  "pages": "1550-1558"
+ },
+ "28650338": {
+  "authors": [
+   "Ayers M",
+   "Lunceford J",
+   "Nebozhyn M",
+   "Murphy E",
+   "Loboda A",
+   "Kaufman DR",
+   "Albright A",
+   "Cheng JD",
+   "Kang SP",
+   "Shankaran V",
+   "Piha-Paul SA",
+   "Yearley J",
+   "Seiwert TY",
+   "Ribas A",
+   "McClanahan TK"
+  ],
+  "n_authors": 15,
+  "title": "IFN-γ-related mRNA profile predicts clinical response to PD-1 blockade.",
+  "journal": "J Clin Invest",
+  "year": "2017",
+  "volume": "127",
+  "issue": "",
+  "pages": "2930-2940"
+ },
+ "31519915": {
+  "authors": [
+   "Griss J",
+   "Bauer W",
+   "Wagner C",
+   "Simon M",
+   "Chen M",
+   "Grabmeier-Pfistershammer K",
+   "Maurer-Granofszky M",
+   "Roka F",
+   "Penz T",
+   "Bock C",
+   "Zhang G",
+   "Herlyn M",
+   "Glatz K",
+   "Läubli H",
+   "Mertz KD",
+   "Petzelbauer P",
+   "Wiesner T",
+   "Hartl M",
+   "Pickl WF",
+   "Somasundaram R",
+   "Steinberger P",
+   "Wagner SN"
+  ],
+  "n_authors": 22,
+  "title": "B cells sustain inflammation and predict response to immune checkpoint blockade in human melanoma.",
+  "journal": "Nat Commun",
+  "year": "2019",
+  "volume": "10",
+  "issue": "",
+  "pages": "4186"
+ },
+ "30635339": {
+  "authors": [
+   "Luke JJ",
+   "Bao R",
+   "Sweis RF",
+   "Spranger S",
+   "Gajewski TF"
+  ],
+  "n_authors": 5,
+  "title": "WNT/β-catenin Pathway Activation Correlates with Immune Exclusion across Human Cancers.",
+  "journal": "Clin Cancer Res",
+  "year": "2019",
+  "volume": "25",
+  "issue": "",
+  "pages": "3074-3083"
+ },
+ "20010215": {
+  "authors": [
+   "Steyerberg EW",
+   "Vickers AJ",
+   "Cook NR",
+   "Gerds T",
+   "Gonen M",
+   "Obuchowski N",
+   "Pencina MJ",
+   "Kattan MW"
+  ],
+  "n_authors": 8,
+  "title": "Assessing the performance of prediction models: a framework for traditional and novel measures.",
+  "journal": "Epidemiology",
+  "year": "2010",
+  "volume": "21",
+  "issue": "",
+  "pages": "128-38"
+ },
+ "18633328": {
+  "authors": [
+   "Ioannidis JP"
+  ],
+  "n_authors": 1,
+  "title": "Why most discovered true associations are inflated.",
+  "journal": "Epidemiology",
+  "year": "2008",
+  "volume": "19",
+  "issue": "",
+  "pages": "640-8"
+ },
+ "16504092": {
+  "authors": [
+   "Varma S",
+   "Simon R"
+  ],
+  "n_authors": 2,
+  "title": "Bias in error estimation when using cross-validation for model selection.",
+  "journal": "BMC Bioinformatics",
+  "year": "2006",
+  "volume": "7",
+  "issue": "",
+  "pages": "91"
+ },
+ "8870764": {
+  "authors": [
+   "Buderer NM"
+  ],
+  "n_authors": 1,
+  "title": "Statistical methodology: I. Incorporating the prevalence of disease into the sample size calculation for sensitivity and specificity.",
+  "journal": "Acad Emerg Med",
+  "year": "1996",
+  "volume": "3",
+  "issue": "",
+  "pages": "895-900"
+ },
+ "25569120": {
+  "authors": [
+   "Collins GS",
+   "Reitsma JB",
+   "Altman DG",
+   "Moons KG"
+  ],
+  "n_authors": 4,
+  "title": "Transparent reporting of a multivariable prediction model for individual prognosis or diagnosis (TRIPOD): the TRIPOD statement.",
+  "journal": "BMJ",
+  "year": "2015",
+  "volume": "350",
+  "issue": "",
+  "pages": "g7594"
+ },
+ "16106022": {
+  "authors": [
+   "McShane LM",
+   "Altman DG",
+   "Sauerbrei W",
+   "Taube SE",
+   "Gion M",
+   "Clark GM",
+   "Statistics Subcommittee of the NCI-EORTC Working Group on Cancer Diagnostics"
+  ],
+  "n_authors": 7,
+  "title": "Reporting recommendations for tumor marker prognostic studies (REMARK).",
+  "journal": "J Natl Cancer Inst",
+  "year": "2005",
+  "volume": "97",
+  "issue": "",
+  "pages": "1180-4"
+ },
+ "29531091": {
+  "authors": [
+   "Nosek BA",
+   "Ebersole CR",
+   "DeHaven AC",
+   "Mellor DT"
+  ],
+  "n_authors": 4,
+  "title": "The preregistration revolution.",
+  "journal": "Proc Natl Acad Sci U S A",
+  "year": "2018",
+  "volume": "115",
+  "issue": "",
+  "pages": "2600-2606"
+ },
+ "25822800": {
+  "authors": [
+   "Newman AM",
+   "Liu CL",
+   "Green MR",
+   "Gentles AJ",
+   "Feng W",
+   "Xu Y",
+   "Hoang CD",
+   "Diehn M",
+   "Alizadeh AA"
+  ],
+  "n_authors": 9,
+  "title": "Robust enumeration of cell subsets from tissue expression profiles.",
+  "journal": "Nat Methods",
+  "year": "2015",
+  "volume": "12",
+  "issue": "",
+  "pages": "453-7"
+ }
+}

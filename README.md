@@ -83,18 +83,25 @@ todolist.md  Task ledger with acceptance criteria
 
 Manuscript figures, drawn to MDPI specifications (≤175 mm width, Arial 8–10 pt,
 lowercase bold parenthesised panel labels). Vector PDF is the delivery format; PNG is
-provided for preview. 600 dpi TIFFs are **not** committed (≈145 MB) — regenerate with
-the figure script.
+provided for preview. 600 dpi TIFFs are **not** committed (≈2 MB each) — regenerate
+with the figure script.
+
+The palette and typography are taken from the source papers this study re-tests, not
+chosen by eye: Auslander 2018 (*Nat Med*, IMPRES), Hugo 2016 and Riaz 2017 (*Cell*,
+the two validation cohorts), and Lauss 2024 (*Nat Commun*). Measured evidence and the
+download route are recorded in `refs/probe_style.py` and `docs/13`. The convention those
+papers share — blue for responder/high score, red for non-responder/low — is carried
+through here: IMPRES is blue, IPS-MHC+CP is salmon red.
 
 | Figure | File | Printed width | Content |
 |---|---|---|---|
-| 1 | `figures/Figure1_StudyDesign.pdf` | 163.6 mm | Cohort design, patient counts, and where each pre-registered decision applies |
-| 2 | `figures/Figure2_SignaturePerformance.pdf` | 172.9 mm | AUC of both signatures across all three validation cohorts with 95 % CIs |
-| 3 | `figures/Figure3_RuledOutExplanations.pdf` | 151.4 mm | Each pre-specified technical excuse and the artefact that excludes it |
-| 4 | `figures/Figure4_NestedCV.pdf` | 158.4 mm | Nested-CV performance under three AUC conventions, 20 repeats |
+| 1 | `figures/Figure1_StudyDesign.pdf` | 163.8 mm | Cohort design, patient counts, and where each pre-registered decision applies |
+| 2 | `figures/Figure2_NestedCV.pdf` | 162.7 mm | Nested-CV performance under three AUC conventions, 20 repeats |
+| 3 | `figures/Figure3_SignaturePerformance.pdf` | 153.2 mm | Forest plots of both signatures across all three validation cohorts, both directions, with 95 % CIs |
+| 4 | `figures/Figure4_RuledOutExplanations.pdf` | 171.2 mm | Each pre-specified technical excuse and the artefact that excludes it |
 
 ```bash
-python scripts/24_figures_mdpi.py   # writes PDF + PNG + 600 dpi TIFF
+python scripts/24_figures_mdpi.py   # writes PDF + TIFF + PNG, auto-fit to 175 mm
 ```
 
 ---
